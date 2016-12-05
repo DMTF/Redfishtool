@@ -66,8 +66,10 @@ While other generic http clients such as Linux curl can send and receive Redfish
                                            -vvvvv(max dbg)
                                            *** use -vvv to see all of the requests being sent for a command
        -s,  --status                    -- status level, can repeat up to 5 times for more status output
-                                          -s(http_status), -ss(+r.url), 
-                                          -sss(+requestHdrs,data,authType, +respStatus_code, AuthToken/sessId/sessUri)
+                                          -s(http_status), 
+                                          -ss(+r.url, +r.elapsed executionTime ),
+                                          -sss(+requestHdrs,data,authType, +respStatus_code, +elapsed exec time, 
+                                               AuthToken/sessId/sessUri)
                                           -ssss(+response headers for debug), -sssss(+response data for debug)
 ###### Options used by "raw" subcommand:
        -d <data>   --data=<data>        -- the http request "data" to send on PATCH,POST,or PUT requests
@@ -95,8 +97,12 @@ While other generic http clients such as Linux curl can send and receive Redfish
        -A <Authn>,   --Auth <Authn>      -- Authentication type to use:  Authn={None|Basic|Session}  Default is Basic
        -S <Secure>,  --Secure=<Secure>   -- When to use https: (Note: doesn't stop rhost from redirect http to https)
                                  <Secure>={Always | IfSendingCredentials | IfLoginOrAuthenticatedApi(default) | Never }
-       -V <ver>,  --RedfishVersion=<ver> -- The Major Redfish Protocol version to use: ver={1, <n>, Latest(default)}
-       -H <hdrs>, --Headers=<hdrs>       -- Specify the request header list--overrides defaults. Format "{ A:B, C:D...}"
+       -R <ver>,  --RedfishVersion=<ver> -- The Major Redfish Protocol version to use: ver={v1(default), v<n>, Latest }
+       -C         --CheckRedfishVersion  -- tells Redfishtool to execute GET /redfish to verify that the rhost supports
+                                            the specified redfish protocol version before executing the sub-command.
+                                            The -C flag is auto-set if the "-R Latest"  or "-W ..." options were selected.
+                                            was specified by the user.
+       -H <hdrs>, --Headers=<hdrs>       -- Specify the request header list--overrides defaults. Format "{ A:B, C:D...}
        -D <flag>,  --Debug=<flag>        -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format
     
 ### Subcommands:
@@ -110,7 +116,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
      SessionService           -- operations on SessionService including Session login/logout
      odata                    -- get the Odata Service Documant: GET ^/redfish/v1/odata
      metadata                 -- get the CSDL metadata document: GET ^/redfish/v1/$metadata
-     raw                      -- execute raw redfish http methods and URIs
+     raw                      -- execute raw redfish http methods and URIs (-C option will be ignored)
      hello                    -- redfishtool hello world subcommand for dev testing
    For Subcommand usage, including subcommand Operations and OtherArgs, execute:
    

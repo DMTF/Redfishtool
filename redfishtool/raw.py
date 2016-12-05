@@ -29,8 +29,8 @@ import json
 import getopt
 import re
 import sys
-from    .ServiceRoot import RfServiceRoot
-from   urllib.parse import urljoin
+#from    .ServiceRoot import RfServiceRoot
+from   urllib.parse import urljoin, urlparse, urlunparse
 
 class RfRawMain():
     def __init__(self):
@@ -183,20 +183,18 @@ class RfRawOperations():
     def httpGet(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in raw".format(rft.subcommand,sc.operation))
         
-        # 1st get serviceRoot
-        svcRoot=RfServiceRoot()
-        rc,r,j,d = svcRoot.getServiceRoot(rft)
-        if( rc != 0 ):
-            rft.printErr("raw: Error getting service root, aborting")
-            return(rc,r,False,None)
-        rootUrl=r.url
-
         # we verified that we had two args in RawMain(), so we can just read the <uri> arg here
         path=sc.args[1]
         method="GET"
         rft.printVerbose(4,"raw: GET: method:{} path:{}".format(method,path))
 
         apiType=self.getApiType(rft,path)   # UNAUTHENTICATED API or Authenticated API
+
+        # calculate rootUrl--with correct scheme, root path, and rhost IP (w/o querying rhost)
+        scheme=rft.getApiScheme(apiType)
+        scheme_tuple=[scheme, rft.rhost, "/redfish", "","",""]
+        rootUrl=urlunparse(scheme_tuple)  # so rootUrl="http[s]://<rhost>[:<port>]/redfish"
+        
         if cmdTop is True:   prop=rft.prop
         jsonData=True
         if (path=="/redfish/v1/$metadata"): jsonData=False
@@ -211,21 +209,18 @@ class RfRawOperations():
     def httpHead(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in raw".format(rft.subcommand,sc.operation))
         
-        # 1st get serviceRoot
-        svcRoot=RfServiceRoot()
-        rc,r,j,d = svcRoot.getServiceRoot(rft)
-        if( rc != 0 ):
-            rft.printErr("raw: Error getting service root, aborting")
-            return(rc,r,False,None)
-        rootUrl=r.url
-
         # we verified that we had two args in RawMain(), so we can just read the <uri> arg here
         path=sc.args[1]
         method="HEAD"
         rft.printVerbose(4,"raw: HEAD: method:{} path:{}".format(method,path))
 
         apiType=self.getApiType(rft,path)   # UNAUTHENTICATED API or Authenticated API
-
+        
+        # calculate rootUrl--with correct scheme, root path, and rhost IP (w/o querying rhost)
+        scheme=rft.getApiScheme(apiType)
+        scheme_tuple=[scheme, rft.rhost, "/redfish", "","",""]
+        rootUrl=urlunparse(scheme_tuple)  # so rootUrl="http[s]://<rhost>[:<port>]/redfish"
+        
         rc,r,j,d=rft.rftSendRecvRequest(apiType, method, rootUrl, relPath=path)
         if(rc==0):
             rft.printVerbose(1," raw HEAD:",skip1=True, printV12=cmdTop)  
@@ -249,13 +244,6 @@ class RfRawOperations():
             return(5,None,False,None)
         ##print("patchData: {}".format(patchData))
 
-        # 1st get serviceRoot
-        svcRoot=RfServiceRoot()
-        rc,r,j,d = svcRoot.getServiceRoot(rft)
-        if( rc != 0 ):
-            rft.printErr("raw: Error getting service root, aborting")
-            return(rc,r,False,None)
-        rootUrl=r.url
 
         # we verified that we had two args in RawMain(), so we can just read the <uri> arg here
         path=sc.args[1]
@@ -263,6 +251,11 @@ class RfRawOperations():
         rft.printVerbose(4,"raw: PATCH: method:{} path:{}".format(method,path))
 
         apiType=self.getApiType(rft,path)   # UNAUTHENTICATED API or Authenticated API
+
+        # calculate rootUrl--with correct scheme, root path, and rhost IP (w/o querying rhost)
+        scheme=rft.getApiScheme(apiType)
+        scheme_tuple=[scheme, rft.rhost, "/redfish", "","",""]
+        rootUrl=urlunparse(scheme_tuple)  # so rootUrl="http[s]://<rhost>[:<port>]/redfish"
 
         #read the resource--the generic patch command needs it to get the etag
         rc,r,j,d=rft.rftSendRecvRequest(apiType, "GET", rootUrl, relPath=path)
@@ -289,20 +282,17 @@ class RfRawOperations():
             return(5,None,False,None)
         ##print("postData: {}".format(postData))
 
-        # 1st get serviceRoot
-        svcRoot=RfServiceRoot()
-        rc,r,j,d = svcRoot.getServiceRoot(rft)
-        if( rc != 0 ):
-            rft.printErr("raw: Error getting service root, aborting")
-            return(rc,r,False,None)
-        rootUrl=r.url
-
         # we verified that we had two args in RawMain(), so we can just read the <uri> arg here
         path=sc.args[1]
         method="POST"
         rft.printVerbose(4,"raw: POST: method:{} path:{}".format(method,path))
 
         apiType=self.getApiType(rft,path)   # UNAUTHENTICATED API or Authenticated API
+
+        # calculate rootUrl--with correct scheme, root path, and rhost IP (w/o querying rhost)
+        scheme=rft.getApiScheme(apiType)
+        scheme_tuple=[scheme, rft.rhost, "/redfish", "","",""]
+        rootUrl=urlunparse(scheme_tuple)  # so rootUrl="http[s]://<rhost>[:<port>]/redfish"
 
         #output the post data in json to send over the network   
         reqPostData=json.dumps(postData)
@@ -322,14 +312,6 @@ class RfRawOperations():
     def httpDelete(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in raw".format(rft.subcommand,sc.operation))
 
-        # 1st get serviceRoot
-        svcRoot=RfServiceRoot()
-        rc,r,j,d = svcRoot.getServiceRoot(rft)
-        if( rc != 0 ):
-            rft.printErr("raw: Error getting service root, aborting")
-            return(rc,r,False,None)
-        rootUrl=r.url
-
         # we verified that we had two args in RawMain(), so we can just read the <uri> arg here
         path=sc.args[1]
         method="DELETE"
@@ -337,6 +319,10 @@ class RfRawOperations():
 
         apiType=self.getApiType(rft,path)   # UNAUTHENTICATED API or Authenticated API
 
+        # calculate rootUrl--with correct scheme, root path, and rhost IP (w/o querying rhost)
+        scheme=rft.getApiScheme(apiType)
+        scheme_tuple=[scheme, rft.rhost, "/redfish", "","",""]
+        rootUrl=urlunparse(scheme_tuple)  # so rootUrl="http[s]://<rhost>[:<port>]/redfish"
 
         #send DELETE to the resource path specified
         rc,r,j,d=rft.rftSendRecvRequest(apiType, method, rootUrl, relPath=path)
@@ -362,7 +348,8 @@ class RfRawOperations():
 TODO:
 1. need to handle case where no patch or post data (no -d)
 2. add raw PUT
-
+CHANGES:
+0.9.2:  no longer call /redfish and /redfish/v1 before executing the raw api
 '''
 
     
