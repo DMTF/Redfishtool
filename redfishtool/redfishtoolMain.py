@@ -3,7 +3,7 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
 # redfishtool:  redfishtool.py  Main
-# v0.9.1
+# v0.9.2
 # contains:
 #  - functions called for usage:
 #     -- displayUsage, displayOptions, listSubcommands, displayHelp
@@ -40,8 +40,10 @@ def displayOptions(rft):
         print("   -v,          --verbose           -- verbose level, can repeat up to 5 times for more verbose output")
         print("                              -v(header), -vv(+addl info), -vvv(Request trace), -vvvv(+subCmd dbg), -vvvvv(max dbg)")
         print("   -s,          --status            -- status level, can repeat up to 5 times for more status output")
-        print("                               -s(http_status), -ss(+r.url), ")
-        print("                               -sss(+request hdrs,data,authType, +response status_code, login auth token/sessId/sessUri)")
+        print("                               -s(http_status), ")
+        print("                               -ss(+r.url, +r.elapsed executionTime ), ")
+        print("                               -sss(+request hdrs,data,authType, +response status_code, +response executionTime, ")
+        print("                                    +login auth token/sessId/sessUri)")
         print("                               -ssss(+response headers), -sssss(+response data")
         print("   -u <user>,   --user=<usernm>     -- username used for remote redfish authentication")
         print("   -p <passwd>, --password=<passwd> -- password used for remote redfish authentication")
@@ -78,7 +80,10 @@ def displayOptions(rft):
         print("   -A <Authn>,   --Auth <Authn>     -- Authentication type to use:  Authn={None|Basic|Session}  Default is Basic")
         print("   -S <Secure>,  --Secure=<Secure>  -- When to use https: (Note: doesn't stop rhost from redirect http to https)")
         print("                                       <Secure>={Always | IfSendingCredentials | IfLoginOrAuthenticatedApi(default) }")
-        print("   -V <ver>,  --RedfishVersion=<ver>-- The Major Redfish Protocol version to use: ver={1, <n>, Latest(default)}")
+        print("   -R <ver>,  --RedfishVersion=<ver>-- The Major Redfish Protocol version to use: ver={v1(dflt), v<n>, Latest}")
+        print("   -C         --CheckRedfishVersion -- tells Redfishtool to execute GET /redfish to verify that the rhost supports")
+        print("                                       the specified redfish protocol version before executing a sub-command. ")
+        print("                                       The -C flag is auto-set if the -R Latest or -W ... options are selected")
         print("   -H <hdrs>, --Headers=<hdrs>      -- Specify the request header list--overrides defaults. Format \"{ A:B, C:D...}\" ")
         print("   -D <flag>,  --Debug=<flag>       -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format")
         print("")
@@ -115,12 +120,13 @@ def main(argv):
     rft=RfTransport()
 
     try:
-        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:I:M:F1L:i:m:l:aW:A:S:R:H:D:",
+        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:I:M:F1L:i:m:l:aW:A:S:R:H:D:C",
                         ["Version", "help", "verbose", "status", "quiet", 
                          "user=", "password=", "rhost=", "token=", "config=", "Timeout=",
                          "Prop=", "data=", "Id=", "Match=", "First", "One", "Link=",
                          "id=", "match=", "link", "all",
-                         "Wait=", "Auth=","Secure=", "RedfishVersion=", "Headers=", "Debug="])
+                         "Wait=", "Auth=","Secure=", "RedfishVersion=", "Headers=", "Debug=",
+                         "CheckRedfishVersion"  ])
     except getopt.GetoptError:
         rft.printErr("Error parsing options")
         displayUsage(rft)
@@ -219,6 +225,7 @@ def main(argv):
             rft.IdLevel2OptnCount+=1
         elif opt in ("-W", "--Wait"):           #specify how long to ping rhost before sending http requests 0=no ping
             # arg is of the form "<num>:<time>
+            rft.checkProtocolVer=True           # if -W ..., set flag to force running GET /redfish first
             waitPattern="^([1-9][0-9]*):([1-9][0-9]*)$"
             waitMatch=re.search(waitPattern,arg)
             if( waitMatch ):
@@ -243,6 +250,8 @@ def main(argv):
                 sys.exit(1)
         elif opt in ("-R", "--RedfishVersion"):     #specify redfish protocol version to use
             rft.protocolVer=arg
+            if(rft.protocolVer=="Latest"):
+                rft.checkProtocolVer=True           # if -R Latest, set flag to force running GET /redfish first
         elif opt in ("-H", "--Headers"):     #specify request headers -- overrides defaults
             try:
                 rft.headers=json.loads(arg)
@@ -258,7 +267,9 @@ def main(argv):
             else:
                 rft.printErr("Invalid -Flag value: {}".format(arg))
                 rft.printErr("     Expect --Flag=<flag> where <flag> is a decimal int",noprog=True)
-                sys.exit(1) 
+                sys.exit(1)
+        elif opt in ("-C", "--CheckRedfishVersion"):
+            rft.checkProtocolVer=True
         else:
             rft.printErr("Error: Unsupported option: {}".format(opt))
             displayUsage(rft)

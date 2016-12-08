@@ -3,7 +3,7 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
 # redfishtool:  redfishtoolTransport.py
-# v0.9.1
+# v0.9.2
 # Contents:
 # 1. Class RfSessionAuth --  holds auto-created session Auth info.  'requests' calls to get credentials
 # 2. Class RfTransport -- has the generic functions to send/receive http requests, generic print functions, etc  
@@ -60,9 +60,9 @@ class RfTransport():
     def __init__(self):
         # constant parameters-- these dont change and are not updated
         self.program="redfishtool"              # program name (in case we want to change it
-        self.version="0.9.1"                    # this redfishtool version
-        self.releaseDate="06/28/2016"           # release date for this version of redfishtool
-        self.downloadFrom="https://github.com/DMTF/spmf-tools/redfishtool" # where to find redfishtool
+        self.version="0.9.2"                    # this redfishtool version
+        self.releaseDate="12/05/2016"           # release date for this version of redfishtool
+        self.downloadFrom="https://github.com/DMTF/Redfishtool" # where to find redfishtool
         self.magic="12345"                      # used for debug to test for a known parameter in this object
         self.UNAUTHENTICATED_API=1              # unauthenticated API that doesn't send credentials in body data
         self.AUTHENTICATED_API=2                # authenticated API that doesn't send credentials in body data
@@ -86,9 +86,10 @@ class RfTransport():
         self.password=""
         self.rhost=None
         self.token=None
-        self.protocolVer="Latest"
+        self.protocolVer="v1"
         self.auth="Basic"  # or "Session" using Basic as default now
         self.timeout=10         # http transport timeout in seconds, stored as int here
+        self.checkProtocolVer=False  # if -C option, then we need to check/verify the protocol ver. dflt=false
 
         # more option parsing variables
         self.prop=None
@@ -173,7 +174,7 @@ class RfTransport():
             #print("else HTTP dflt")
         return(scheme)  #return ok
             
-    def getVersionsAndSetRootPath(self,rft):
+    def getVersionsAndSetRootPath(self,rft,forceCheckProtocolVer=False):
         # Read the Redfish Versions API (/redfish) to determine which protocol versions the service supports
         # The proper ServiceRoot Path returned for each protocol version eg:  { "v1": "/redfish/v1" }.
         # If self.redfishProtocolVersion="Latest" (which is the default), we will select the latest version
@@ -199,6 +200,26 @@ class RfTransport():
         if( rft.rhost is None):
             rft.printErr("Transport: -r rHost was not specified and is required by this command. aborting")
             return(5,None,False,None)
+
+        # if the checkProtocol flag is not set true, dont query rhost for /redfish version
+        # just use what was passed in with -R <redfishVersion> or the default "v1"
+        if( (rft.checkProtocolVer is False) and (forceCheckProtocolVer is not True) ):
+            # If here, checkProtocolVer is false.  we will generate the rootURL and hope for the best
+            # This saves additional Get /redfish query that 99.9% of time is ok
+            # the Get Versions API (GET /redfish) calls the routine with forceCheckProtocolVer=True
+            rft.rootPath=urljoin("/redfish/", (rft.protocolVer + "/") )
+            #id of protocolVersion is v1, rft.rootPath="/redfish/v1/"
+
+            # calculate the rootUri including scheme,rhost,rootPath properly
+            scheme=rft.getApiScheme(rft.UNAUTHENTICATED_API)
+            scheme_tuple=[scheme,rft.rhost, rft.rootPath, "","",""]
+            rootUrl=urlunparse(scheme_tuple)
+            rft.rootUri=rootUrl
+            # save parameters
+            rft.rhostSupportedVersions=None
+            rft.versionToUse=rft.protocolVer
+            rft.printVerbose(5,"Transport.getRootPath: protocolVer to use={},  rootPath={}".format(rft.versionToUse, rft.rootPath))
+            return(0,None,False,None) # return ok
 
         # create scheme based on input parameters and apiType(set here) using setApiScheme() function above.
         scheme=rft.getApiScheme(rft.UNAUTHENTICATED_API)
@@ -565,7 +586,7 @@ class RfTransport():
         if(rft.help):
             print(" {} versions | redfish [-vh]   -- get redfishProtocol versions supported by rhost".format(rft.program))
             return(0,None,False,None)
-        rc,r,j,d=rft.getVersionsAndSetRootPath(rft)
+        rc,r,j,d=rft.getVersionsAndSetRootPath(rft, forceCheckProtocolVer=True)
         if(rc != 0):
             return(rc,None,False,None)
 
@@ -724,6 +745,7 @@ class RfTransport():
             print("#STATUS: Last Response: r.status_code: {}".format(r.status_code))
         elif( (s==2 ) and (self.status >= s ) and (r is not None) ):
             print("#STATUS: Last Response: r.url: {}".format(r.url))
+            print("#STATUS: Last Response: r.elapsed(responseTime): {0:.2f} sec".format(r.elapsed.total_seconds()))
         elif( (s==3 ) and (self.status >= s ) and (r is not None) ):
             if( addSessionLoginInfo is True):
                 print("#____AUTH_TOKEN:  {}".format(self.authToken))
@@ -735,6 +757,7 @@ class RfTransport():
                 print("#__Request AuthType: {}".format(authMsg))
                 print("#__Request Data: {}".format(r.request.body))
                 print("#__Response.status_code: {},         r.url: {}".format(r.status_code,r.url))
+                print("#__Response.elapsed(responseTime): {0:.2f} sec".format(r.elapsed.total_seconds()))
         elif( (s==4 ) and (self.status >= s ) and (r is not None) ):
             print("#__Response.Headers: {}".format(r.headers))
         elif( (s==5 ) and (self.status >= s )  ):
