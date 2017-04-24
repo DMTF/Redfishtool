@@ -10,7 +10,6 @@
 #  - getOdataServiceDocument    GET /redfish/v1/odata
 #  - getOdataMetadataDocument   GET /redfish/v1/$metadata
 #
-from   .redfishtoolTransport import RfTransport
 import requests
 import json
 from urllib.parse import urljoin, urlparse, urlunparse

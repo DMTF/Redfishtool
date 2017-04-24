@@ -61,10 +61,10 @@ class RfSystemsMain():
         
     def displayOperations(self,rft):
         print("  <operations>:")
-        print("     [collection]              -- get the main Systems collection. (Dflt operation if no member specified)")
-        print("     [get]                     -- get the computerSystem object. (Defalut operation if collection member specified)")
+        print("     [collection]              -- get the main Systems collection. (Default operation if no member specified)")
+        print("     [get]                     -- get the computerSystem object. (Default operation if collection member specified)")
         print("     list                      -- list information about the Systems collection members(\"Id\", URI, and AssetTag)")
-        print("     patch {A: B,C: D,...}     -- patch the json-formated {prop: value...} data to the object")
+        print("     patch {A: B,C: D,...}     -- patch the json-formatted {prop: value...} data to the object")
         print("     reset <resetType>         -- reset a system.  <resetType>= On,  GracefulShutdown, GracefulRestart, ")
         print("                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerPutton")
         print("     setAssetTag <assetTag>    -- set the system's asset tag ")
@@ -790,7 +790,7 @@ class RfSystemsOperations():
         print(" {} -r<ip> Systems -L <sysUrl>              # gets the system at URI=<systemUrl".format(rft.program))
         print(" {} -r<ip> Systems -F                       # get the First system returned (for debug)".format(rft.program))
         print(" {} -r<ip> Systems -1                       # get the first system and verify that there is only one system".format(rft.program))
-        print(" {} -r<ip> Systems -I <id> patch {{A: B,C: D,...}}     # patch the json-formated {{prop: value...}} data to the object".format(rft.program))
+        print(" {} -r<ip> Systems -I <id> patch {{A: B,C: D,...}}     # patch the json-formatted {{prop: value...}} data to the object".format(rft.program))
         print(" {} -r<ip> Systems -I <id> reset <resetType>         # reset a system.  <resetType>=the redfish-defined values: On, Off, gracefulOff...".format(rft.program))
         print(" {} -r<ip> Systems -I <id> setAssetTag <assetTag>    # set the system's asset tag ".format(rft.program))
         print(" {} -r<ip> Systems -I <id> setIndicatorLed  <state>  # set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking".format(rft.program))
@@ -798,7 +798,7 @@ class RfSystemsOperations():
         print(" {} -r<ip> Systems -I<Id> Processors        # get the processors Collection".format(rft.program))
         print(" {} -r<ip> Systems -I<Id> Processors list   # lists Id, Uri, and Socket for all processors in system with Id=<Id>".format(rft.program))
         print(" {} -r<ip> Systems -I<Id> Processors -i 1   # get the processor with id=1 in system with Id=<Id>".format(rft.program))
-        print(" {} -r<ip> Systems -L <sysUrl> Processors -m Socket:CPU_1  # get proocessor with property Socket=CPU_1, on system at url <sysUrl>".format(rft.program))
+        print(" {} -r<ip> Systems -L <sysUrl> Processors -m Socket:CPU_1  # get processor with property Socket=CPU_1, on system at url <sysUrl>".format(rft.program))
         return(0,None,False,None)
 
 

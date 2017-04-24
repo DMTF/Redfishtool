@@ -59,10 +59,10 @@ class RfManagersMain():
 
     def displayOperations(self,rft):
         print("  <operations>:")
-        print("     [collection]              -- get the main Managers collection. (Dflt operation if no member specified)")
-        print("     [get]                     -- get the specified Manager object. (Defalut operation if collection member specified)")
+        print("     [collection]              -- get the main Managers collection. (Default operation if no member specified)")
+        print("     [get]                     -- get the specified Manager object. (Default operation if collection member specified)")
         print("     list                      -- list information about the Managers collection members(\"Id\", URI, and UUID)")
-        print("     patch {A: B,C: D,...}     -- patch the json-formated {prop: value...} data to the object")
+        print("     patch {A: B,C: D,...}     -- patch the json-formatted {prop: value...} data to the object")
         print("     reset <resetType>         -- reset a Manager.  <resetType>= On,  GracefulShutdown, GracefulRestart, ")
         print("                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerPutton")
         print("     setDateTime <dateTimeString>--set the date and time")
@@ -680,7 +680,7 @@ class RfManagersOperations():
         print(" {} -r<ip> Managers -L <mgrUrl>              # gets the Manager at URI=<mgrUrl".format(rft.program))
         print(" {} -r<ip> Managers -F                       # get the First Manager returned (for debug)".format(rft.program))
         print(" {} -r<ip> Managers -1                       # get the first Manager and verify that there is only one Manager".format(rft.program))
-        print(" {} -r<ip> Managers -I <id> patch {{A: B,C: D,...}}# patch the json-formated {{prop: value...}} data to the object".format(rft.program))
+        print(" {} -r<ip> Managers -I <id> patch {{A: B,C: D,...}}# patch the json-formatted {{prop: value...}} data to the object".format(rft.program))
         print(" {} -r<ip> Managers -I <id> reset <resetType>      # reset a Manager.  <resetType>=the redfish-defined values: On, Off, gracefulOff...".format(rft.program))
         print(" {} -r<ip> Managers -I<Id> NetworkProtocol         # get the NetworkProtocol resource under the specified manager".format(rft.program))
         print(" {} -r<ip> Managers -I<Id> EthernetInterfaces list # lists Id, Uri, and Name for all of the NICs for Manager w/ Id=<Id>".format(rft.program))

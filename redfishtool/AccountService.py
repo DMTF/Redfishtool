@@ -57,7 +57,7 @@ class RfAccountServiceMain():
     def displayOperations(self,rft):
         print("  <operations>:")
         print("     [get]                     -- get the AccountService object. ")
-        print("     patch {A: B,C: D,...}     -- patch the AccountService w/ json-formated {prop: value...} ")
+        print("     patch {A: B,C: D,...}     -- patch the AccountService w/ json-formatted {prop: value...} ")
         print("     Accounts [list]           -- get the \"Accounts\" collection, or list \"Id\", username, and Url ")
         print("       Accounts [IDOPTN]       --   get the member specified by IDOPTN: -i<Id>, -m<prop>:<val>, -l<link>, -a #all")
         print("     Roles [list]              -- get the \"Roles\" collection, or list \"Id\", IsPredefined, and Url ")
@@ -608,7 +608,9 @@ class RfAccountServiceOperations():
             return(rc,None,False,None)
 
         # send patch to set the properties
-        rc,r,j,d=rft.patchResource(rft, r, patchData)  # this routine always returns the resource response
+        # but set flag not to read the account back 
+        #    since the password has changed, this would fail for Basic Auth
+        rc,r,j,d=rft.patchResource(rft, r, patchData, getResponseAfterPatch=False )  
         if(rc==0):
             rft.printVerbose(1," AccountService setPassword: successful",skip1=True, printV12=cmdTop)
             respData=d

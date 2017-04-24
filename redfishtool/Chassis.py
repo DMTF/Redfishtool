@@ -59,10 +59,10 @@ class RfChassisMain():
 
     def displayOperations(self,rft):
         print("  <operations>:")
-        print("     [collection]              -- get the main Chassis collection. (Dflt operation if no member specified)")
-        print("     [get]                     -- get the Chassis object. (Defalut operation if collection member specified)")
+        print("     [collection]              -- get the main Chassis collection. (Default operation if no member specified)")
+        print("     [get]                     -- get the Chassis object. (Default operation if collection member specified)")
         print("     list                      -- list information about the Chassis collection members(\"Id\", URI, and AssetTag)")
-        print("     patch {A: B,C: D,...}     -- patch the json-formated {prop: value...} data to the object")
+        print("     patch {A: B,C: D,...}     -- patch the json-formatted {prop: value...} data to the object")
         print("     setAssetTag <assetTag>    -- set the Chassis's asset tag ")
         print("     setIndicatorLed  <state>  -- set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking")
         print("     Power                     -- get the full Power resource under a specified Chassis instance.")
@@ -678,7 +678,7 @@ class RfChassisOperations():
         print(" {} -r<ip> Chassis -L <sysUrl>              # gets the Chassis at URI=<systemUrl".format(rft.program))
         print(" {} -r<ip> Chassis -F                       # get the First Chassis returned (for debug)".format(rft.program))
         print(" {} -r<ip> Chassis -1                       # get the first Chassis and verify that there is only one system".format(rft.program))
-        print(" {} -r<ip> Chassis -I <id> patch {{A: B,C: D,...}}     # patch the json-formated {{prop: value...}} data to the object".format(rft.program))
+        print(" {} -r<ip> Chassis -I <id> patch {{A: B,C: D,...}}     # patch the json-formatted {{prop: value...}} data to the object".format(rft.program))
         print(" {} -r<ip> Chassis -I <id> setAssetTag <assetTag>    # set the system's asset tag ".format(rft.program))
         print(" {} -r<ip> Chassis -I <id> setIndicatorLed  <state>  # set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking".format(rft.program))
         print(" {} -r<ip> Chassis -I<Id> Power             # get the full chassis Power resource".format(rft.program))
