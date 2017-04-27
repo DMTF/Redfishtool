@@ -146,7 +146,7 @@ class RfTransport():
         self.cleanupOnExit=True
 
         # measured execution time
-        self.elapsed
+        self.elapsed=None
 
         requests.packages.urllib3.disable_warnings()
 

@@ -1,5 +1,11 @@
 
 # Change Log
+## [0.9.3] - 2017-4-27
+- updated spelling in various usage print statements
+- corrected usage statement for SessionService login and logout subcommands
+- fixed error in collection list subcommand to show the path correctly
+- fixed password update so that it won't fail if using basicAuth and non-admin user to change your own password.  It was failing if using basic auth and privilege was not Admin since the final get used the old credentials.
+- changed elapsed time calculation to measure execution time around request lib instead of using the internal request r.elapsed property.   0.9.2 was measuring exec time short in some cases as the internal elapsed prop measures execution time until 1st header is returned--not until all data is returned.
 
 ## [0.9.2] - 2016-12-05
 - modified "raw" subcommand so that it does not execute /redfish or /redfish/v1 before executing the raw api
