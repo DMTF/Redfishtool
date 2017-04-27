@@ -100,7 +100,7 @@ def listSubcommands(rft):
         print("     Managers              -- operations on Managers in the /Managers collection")
         print("     AccountService        -- operations on AccountService including user administration")
         print("     SessionService        -- operations on SessionService including Session login/logout")
-        print("     odata                 -- get the Odata Service Documant: GET ^/redfish/v1/odata")
+        print("     odata                 -- get the Odata Service document: GET ^/redfish/v1/odata")
         print("     metadata              -- get the CSDL metadata document: GET ^/redfish/v1/$metadata")
         print("     raw                   -- subcommand to execute raw http methods(GET,PATCH,POST...) and URIs")
 

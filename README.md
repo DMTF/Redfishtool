@@ -239,8 +239,9 @@ While other generic http clients such as Linux curl can send and receive Redfish
        setSessionTimeout <timeout> -- patches the SessionTimeout property w/ etag support
        Sessions [list]             -- get the "Sessions" collection, or list "Id", username, and Url
          Sessions [IDOPTN]         --   get the member specified by IDOPTN: -i<Id>, -m<prop>:<val>, -l<link>, -a #all
-       login <user> <passwd>       -- sessionLogin.  post to Sessions collection to create a session
-       logout <sessionId>          -- logout or delete the session identified by <SessionId>
+       login                       -- sessionLogin.  post to Sessions collection to create a session
+                                   --    the use is -u<user>, password is -p<password>
+       logout <sessionId>          -- logout or delete the session identified by -l<link> or -i <SessionId>
        examples                    -- example commands with syntax
        hello                       -- Systems hello -- debug command
 
@@ -372,8 +373,8 @@ While other generic http clients such as Linux curl can send and receive Redfish
      redfishtool -r<ip> SessionService Sessions -i<sessId>         # gets the session with session Id <sessId>
      redfishtool -r<ip> SessionService patch {A: B,C: D,...}       # patch the json-formated {prop: value...} 
                                                                      data to the sessionService object
-     redfishtool -r<ip> SessionService login <usernm> <passwd>     # login (create session)
-     redfishtool -r<ip> SessionService logout <sessionId>          # logout (delete session <sessId>
+     redfishtool -r<ip> SessionService login -u<user> -p<password> # login (create session)
+     redfishtool -r<ip> SessionService logout  -i<sessionId>       # logout (delete session <sessId>
 
 
 

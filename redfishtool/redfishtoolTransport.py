@@ -3,7 +3,7 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
 # redfishtool:  redfishtoolTransport.py
-# v0.9.2
+# v0.9.3
 # Contents:
 # 1. Class RfSessionAuth --  holds auto-created session Auth info.  'requests' calls to get credentials
 # 2. Class RfTransport -- has the generic functions to send/receive http requests, generic print functions, etc  
@@ -41,8 +41,7 @@ import socket
 import time
 from urllib.parse import urljoin, urlparse, urlunparse
 from requests.auth import HTTPBasicAuth, AuthBase
-#import urllib3
-#from    .ServiceRoot import RfServiceRoot
+from .ServiceRoot import RfServiceRoot
 
 
 class RfSessionAuth(AuthBase):
@@ -55,13 +54,12 @@ class RfSessionAuth(AuthBase):
         #print("Call SESSION AUTH")
         return(r)
 
-
 class RfTransport():
     def __init__(self):
         # constant parameters-- these dont change and are not updated
-        self.program="redfishtool"              # program name (in case we want to change it
-        self.version="0.9.2"                    # this redfishtool version
-        self.releaseDate="12/05/2016"           # release date for this version of redfishtool
+        self.program="redfishtool"              # program name (in case we want to change it)
+        self.version="0.9.3"                    # this redfishtool version
+        self.releaseDate="4/17/2017"            # release date for this version of redfishtool
         self.downloadFrom="https://github.com/DMTF/Redfishtool" # where to find redfishtool
         self.magic="12345"                      # used for debug to test for a known parameter in this object
         self.UNAUTHENTICATED_API=1              # unauthenticated API that doesn't send credentials in body data
@@ -70,7 +68,7 @@ class RfTransport():
         self.UNAUTHENTICATED_WITH_CREDENTIALS_API=4 # session login (unauthenticated) but sends credentials
         self.authValidValues=["None", "Basic", "Session"]
         self.secureValidValues=["Never", "IfSendingCredentials", "IfLoginOrAuthenticatedApi", "Always"]
-        self.supportedVersions=["v0","v1"]      # list of RedfishProtocolVersions that this program supports
+        self.supportedVersions=["v1"]      # list of RedfishProtocolVersions that this program supports
         self.MaxNextLinks=10                # max number of requests allowed with NextLink
         self.dfltPatchPostPutHdrs = {'OData-Version': '4.0', 'Content-Type': 'application/json', 'Accept': 'application/json'  }
         self.dfltGetDeleteHeadHdrs = {'Accept': 'application/json', 'OData-Version': '4.0' }
@@ -119,7 +117,6 @@ class RfTransport():
         self.Link=None   # -L <Link> or --Link=<link>
         self.configFile=""      
         self.secure="IfLoginOrAuthenticatedApi" #Never
-        #self.secure="IfSendingCredentials" #Never
         self.waitTime=3
         self.waitNum=1
         self.headers=None
@@ -147,6 +144,9 @@ class RfTransport():
         self.sessionLink=None
         self.authToken=None
         self.cleanupOnExit=True
+
+        # measured execution time
+        self.elapsed=None
 
         requests.packages.urllib3.disable_warnings()
 
@@ -239,7 +239,10 @@ class RfTransport():
         for attempt in range(0,rft.waitNum):
             try:
                 rft.printVerbose(3,"Transport:getVersions: GET {}".format(url))
+                t1=time.time()
                 r = requests.get(url, headers=hdrs, verify=False, timeout=(rft.waitTime,rft.timeout))  # GET ^/redfish
+                t2=time.time()
+                rft.elapsed = t2 - t1
                 # print request headers
                 rft.printStatus(3,r=r,authMsg=None)
 
@@ -476,8 +479,11 @@ class RfTransport():
         for attempt in range(0,rft.MaxNextLinks):
             try:
                 rft.printVerbose(3,"Transport:SendRecv:    {} {}".format(method,url))
+                t1=time.time()
                 r = requests.request(method, url, headers=hdrs, auth=authType, verify=verify, data=reqData,
                                      timeout=(rft.waitTime,rft.timeout),**kwargs)  # GET ^/redfish
+                t2=time.time()
+                rft.elapsed = t2 - t1
                 # print request headers
                 rft.printStatus(3,r=r,authMsg=authMsg)
 
@@ -745,7 +751,7 @@ class RfTransport():
             print("#STATUS: Last Response: r.status_code: {}".format(r.status_code))
         elif( (s==2 ) and (self.status >= s ) and (r is not None) ):
             print("#STATUS: Last Response: r.url: {}".format(r.url))
-            print("#STATUS: Last Response: r.elapsed(responseTime): {0:.2f} sec".format(r.elapsed.total_seconds()))
+            print("#STATUS: Last Response: r.elapsed(responseTime): {0:.2f} sec".format(self.elapsed))
         elif( (s==3 ) and (self.status >= s ) and (r is not None) ):
             if( addSessionLoginInfo is True):
                 print("#____AUTH_TOKEN:  {}".format(self.authToken))
@@ -757,7 +763,7 @@ class RfTransport():
                 print("#__Request AuthType: {}".format(authMsg))
                 print("#__Request Data: {}".format(r.request.body))
                 print("#__Response.status_code: {},         r.url: {}".format(r.status_code,r.url))
-                print("#__Response.elapsed(responseTime): {0:.2f} sec".format(r.elapsed.total_seconds()))
+                print("#__Response.elapsed(responseTime): {0:.2f} sec".format(self.elapsed))
         elif( (s==4 ) and (self.status >= s ) and (r is not None) ):
             print("#__Response.Headers: {}".format(r.headers))
         elif( (s==5 ) and (self.status >= s )  ):
@@ -853,7 +859,7 @@ class RfTransport():
         if(rft.Link is not None):
             for i in range (0,numOfLinks):
                 if( '@odata.id'  not in coll['Members'][i] ):
-                    rft.printErr("Error: getPathBy --Link option: improper formated link-no @odata.id")
+                    rft.printErr("Error: getPathBy --Link option: improper formatted link-no @odata.id")
                     return(None,1,None,False,None)
                 else:
                     path=coll['Members'][i]['@odata.id']
@@ -869,14 +875,14 @@ class RfTransport():
                 rft.printErr("Error: getPathBy --One option: more than one link in members array")
                 return(None,1,None,False,None)
             if('@odata.id'  not in coll['Members'][0] ):
-                rft.printErr("Error: getPathBy --One option: improper formated link-no @odata.id")
+                rft.printErr("Error: getPathBy --One option: improper formatted link-no @odata.id")
                 return(None,1,None,False,None)
             else:
                 return(coll['Members'][0]['@odata.id'],0,None,False,None)
 
         elif( rft.firstOptn and not rft.gotMatchOptn):
             if( '@odata.id'  not in coll['Members'][0] ):
-                rft.printErr("Error: getPathBy --First option: improper formated link-no @odata.id")
+                rft.printErr("Error: getPathBy --First option: improper formatted link-no @odata.id")
                 return(None,1,None,False,None)
             else:   
                 return(coll['Members'][0]['@odata.id'],0,None,False,None)
@@ -887,7 +893,7 @@ class RfTransport():
             matches=0
             for i in range (0,numOfLinks):
                 if( '@odata.id'  not in coll['Members'][i] ):
-                    rft.printErr("Error: getPathBy --Id or --Match option: improper formated link-no @odata.id")
+                    rft.printErr("Error: getPathBy --Id or --Match option: improper formatted link-no @odata.id")
                     return(None,1,None,False,None)
                 else:
                     path=coll['Members'][i]['@odata.id']
@@ -934,7 +940,7 @@ class RfTransport():
         if(rft.linkLevel2 is not None):
             for i in range (0,numOfLinks):
                 if( '@odata.id'  not in coll['Members'][i] ):
-                    rft.printErr("Error: getPathBy --Link option: improper formated link-no @odata.id")
+                    rft.printErr("Error: getPathBy --Link option: improper formatted link-no @odata.id")
                     return(None,1,None,False,None)
                 else:
                     path=coll['Members'][i]['@odata.id']
@@ -948,7 +954,7 @@ class RfTransport():
             baseUrl=r.url
             for i in range (0,numOfLinks):
                 if( '@odata.id'  not in coll['Members'][i] ):
-                    rft.printErr("Error: getPathBy2 --Id or --Match option: improper formated link-no @odata.id")
+                    rft.printErr("Error: getPathBy2 --Id or --Match option: improper formatted link-no @odata.id")
                     return(None,1,None,False,None)
                 else:
                     path=coll['Members'][i]['@odata.id']
@@ -991,7 +997,7 @@ class RfTransport():
         members=list()
         for i in range (0,numOfLinks):
             if( '@odata.id'  not in coll['Members'][i] ):
-                rft.printErr("Error: listCollection  improper formated link-no @odata.id")
+                rft.printErr("Error: listCollection  improper formatted link-no @odata.id")
                 return(4,None,False,None)
             else:
                 path=coll['Members'][i]['@odata.id']
@@ -1014,7 +1020,11 @@ class RfTransport():
                     members.append(listMember)
 
         #create base list dictionary
-        listd={ "@odata.id": path, "Members@odata.count": numOfLinks, "Members": members }
+        collPath=urlparse(baseUrl).path
+        collname=""
+        if "Name" in coll:
+            collname=coll["Name"]
+        listd={ "_Path": collPath, "Name": collname, "Members@odata.count": numOfLinks, "Members": members }
         return(0, None, True, listd)
 
 
@@ -1038,7 +1048,7 @@ class RfTransport():
         expandedMembers=list()
         for i in range (0,numOfLinks):
             if( '@odata.id'  not in coll['Members'][i] ):
-                rft.printErr("Error: getAllCollectionMembers  improper formated link-no @odata.id")
+                rft.printErr("Error: getAllCollectionMembers  improper formatted link-no @odata.id")
                 return(4,None,False,None)
             else:
                 path=coll['Members'][i]['@odata.id']
@@ -1054,7 +1064,7 @@ class RfTransport():
 
 
     # this is the generic patch routing used by Systems patch, Chassis patch, etc
-    def patchResource(self, rft, r, patchData ):
+    def patchResource(self, rft, r, patchData, getResponseAfterPatch=True ):
         if( patchData is None ):
             rft.printErr("Transport:Patch: patchData=None")
             return(4,None,False,None)
@@ -1091,9 +1101,14 @@ class RfTransport():
                                         headersInput=patchHeaders, reqData=reqPatchData)
         # if response was good but no data retured (status_Code=204), then do another GET to get the response
         if(rc==0):
-            if(r.status_code==204):  #no data returned, get the response
-                rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url )
-                if( rc != 0):  return(rc,r,False,None)
+            if(r.status_code==204):  #no data returned, get the response   
+                # if the getResponseAfterPatch was set False, dont get a response
+                # this is used by change password to not execute after changing password since the
+                if getResponseAfterPatch is True:
+                    rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url )
+                    if( rc != 0):  return(rc,r,False,None)
+                else:
+                    return(rc,r,False,None)
             #now check if status_code=200, but the content is a message--not a resource representation
             #some 1.0 implementations are returning 200 with message OK
             #thus, we need to do another GET
