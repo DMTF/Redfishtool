@@ -225,6 +225,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
        deleteuser <usernm>       -- delete an existing user from Accouts collection
        setpassword  <usernm> <passwd>  -- set (change) the password of an existing user account
        useradmin <userName> [enable|disable|unlock|[setRoleId <roleId>]] -- enable|disable|unlock.. a user account
+       setusername <id> <userName> -- set UserName for account with given Id
        examples                  -- example commands with syntax
        hello                     -- AccountService hello -- debug command
 
@@ -362,6 +363,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
      redfishtool -r<ip> AccountService deleteuser john          # delete user "john"s account
      redfishtool -r<ip> AccountService useradmin john disable   # disable user "john"s account
      redfishtool -r<ip> AccountService useradmin john unlock    # unlock user "john"s account
+     redfishtool -r<ip> AccountService setusername 3 alice      # set username for account with id=3 to "alice"
 
 
 ### SessionService subcommand Examples
