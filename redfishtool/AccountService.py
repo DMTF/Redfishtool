@@ -67,6 +67,7 @@ class RfAccountServiceMain():
         print("     deleteuser <usernm>       -- delete an existing user from Accouts collection")
         print("     setpassword  <usernm> <passwd>  -- set (change) the password of an existing user account")
         print("     useradmin <userName> [enable|disable|unlock|[setRoleId <roleId>]] -- enable|disable|unlock.. a user account")
+        print("     setusername <id> <userName> -- set UserName for account with given Id")
         #print("     addrole   <roleId> <listOfPrivileges> -- add a new custom role to the Roles collection")
         #print("                               -- <listOfPrivileges> is string of form: Login,ConfigeUsers,ConfigureSelf...")
         #print("     deleterole <roleId>       -- delete an existing role from Roles collection")
@@ -95,6 +96,7 @@ class RfAccountServiceMain():
             "deleteuser":                   op.deleteUser,
             "setpassword":                  op.setPassword,
             "useradmin":                    op.userAdmin,
+            "setusername":                  op.setUsername,
             #"addrole":                      op.addRole,
             #"deleterole":                   op.deleteRole,
             "hello":                        op.hello,
@@ -564,12 +566,72 @@ class RfAccountServiceOperations():
             respData={prop: d[prop]}
             return(rc,r,j,respData)
         else: return(rc,r,False,None)
-              
+
     def userAdminUsage(self,rft):
         rft.printErr("Syntax:  {} useradmin <username> {{enable|disable|unlock|{{setRoleId <roleId>}} }}".format(rft.program))
         return(8)
 
 
+    # setusername <id> <username>
+    def setUsername(self, sc, op, rft, cmdTop=False, prop=None):
+        rft.printVerbose(4, "{}:{}: in operation".format(rft.subcommand, sc.operation))
+
+        # verify we have two addl args (<id> and <username>)
+        # create the patch string
+        # get Accounts collection
+        # then find the Accounts entry for the id, and verify we have that id
+        # verify the service supports the properties we need to set
+        # send patch to set the properties
+        # print("arglen:{}, arg0:{}, args:{}".format(len(sc.args),sc.args[0], sc.args))
+
+        # verify we have two additional args,
+        if (len(sc.args) != 3):
+            rft.printErr("Error, setusername: invalid number of arguments")
+            rc = self.setUsernameUsage(rft)
+            return (rc, None, False, None)
+
+        # get the <id> and <username> from args
+        idVal = sc.args[1]
+        userName = sc.args[2]
+
+        # create the patch string, and identify property to set so that we can check that the resource has the property later
+        prop = "UserName"
+        patchData = {prop: userName}
+
+        # get Accounts collection
+        rc, r, j, d = op.getAccounts(sc, op, rft)
+        if (rc != 0):  return (rc, r, False, None)
+
+        # find the Accounts entry for id, and verify we have that id
+        rft.gotMatchLevel2Optn = True
+        rft.matchLevel2Prop = "Id"
+        rft.matchLevel2Value = idVal
+        path, rc, r, j, d = rft.getLevel2ResourceById(rft, r,
+                                                      d)  # this will return path to the acct as well as current resource in d
+        if (rc != 0):
+            rft.printErr("Error: Id {} is not a valid account Id".format(idVal))
+            return (rc, None, False, None)
+        accountResponse = r
+
+        # verify the service supports the properties we need to set
+        if (not prop in d):
+            rft.printErr("Error: setusername: property {} not in the remote service user account resource".format(prop))
+            return (8, None, False, None)
+
+        # send patch to set the properties
+        rc, r, j, d = rft.patchResource(rft, accountResponse, patchData)
+        if (rc == 0):
+            rft.printVerbose(1, " AccountService setusername {} {} :".format(idVal, userName), skip1=True,
+                             printV12=cmdTop)
+            respData = {prop: d[prop]}
+            return (rc, r, j, respData)
+        else:
+            return (rc, r, False, None)
+
+    def setUsernameUsage(self, rft):
+        rft.printErr(
+            "Syntax:  {} setusername <id> <username>".format(rft.program))
+        return (8)
 
 
     # setpassword <username> <password>
@@ -646,6 +708,7 @@ class RfAccountServiceOperations():
         print(" {} -r<ip> AccountService deleteuser john          # delete user \"john\"s account".format(rft.program))
         print(" {} -r<ip> AccountService useradmin john disable   # disable user \"john\"s account".format(rft.program))
         print(" {} -r<ip> AccountService useradmin john unlock    # unlock user \"john\"s account".format(rft.program))
+        print(" {} -r<ip> AccountService setusername 3 alice      # set username for account with id=3 to \"alice\"".format(rft.program))
         return(0,None,False,None)
 
     
