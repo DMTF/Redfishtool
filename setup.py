@@ -14,6 +14,7 @@ setup(name='redfishtool',
       ],
       keywords='Redfish',
       url='https://github.com/billdodd/Redfishtool',
+      download_url='https://github.com/billdodd/Redfishtool/archive/0.9.0.tar.gz',
       packages=['redfishtool'],
       scripts=['redfishtool.py'],
       install_requires=['requests']
