@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='redfishtool',
-      version='1.0.0',
+      version='0.9.0',
       description='Redfishtool package and command-line client',
       author='DMTF',
       author_email='DMTF@DMTF.com',
@@ -13,7 +13,7 @@ setup(name='redfishtool',
           'Topic :: Communications'
       ],
       keywords='Redfish',
-      url='https://github.com/DMTF/Redfishtool',
+      url='https://github.com/billdodd/Redfishtool',
       packages=['redfishtool'],
       scripts=['redfishtool.py'],
       install_requires=['requests']
