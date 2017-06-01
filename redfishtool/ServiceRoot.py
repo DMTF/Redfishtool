@@ -3,7 +3,7 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
 # redfishtool: ServiceRoot.py
-# v0.9.2
+#
 # contains serviceRoot related subCommands and access functions
 # Class RfServiceRoot
 #  - getServiceRoot   GET /redfish/v1
