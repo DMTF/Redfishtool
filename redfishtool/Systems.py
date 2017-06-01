@@ -3,7 +3,7 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
 # redfishtool: Systems.py
-# v0.9.1
+#
 # contains Systems related subCommands and access functions
 #
 # Class RfSystemsMain

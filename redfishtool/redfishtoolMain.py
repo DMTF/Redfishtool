@@ -3,7 +3,7 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
 # redfishtool:  redfishtool.py  Main
-# v0.9.2
+#
 # contains:
 #  - functions called for usage:
 #     -- displayUsage, displayOptions, listSubcommands, displayHelp

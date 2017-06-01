@@ -3,7 +3,7 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
 # redfishtool: Managers.py
-# v0.9.1
+#
 # contains Managers related subCommands and access functions
 #
 # Class RfManagersMain

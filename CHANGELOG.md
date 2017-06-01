@@ -1,5 +1,7 @@
-
 # Change Log
+## [1.0.0] - 2017-6-1
+- added AccountService setusername operation to modify the UserName property in an existing account
+
 ## [0.9.3] - 2017-4-27
 - updated spelling in various usage print statements
 - corrected usage statement for SessionService login and logout subcommands
