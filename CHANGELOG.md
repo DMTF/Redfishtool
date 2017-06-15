@@ -1,4 +1,7 @@
 # Change Log
+## [1.0.1] - 2017-6-15
+- created a script called `redfishtool` to be installed via `pip install redfishtool`
+
 ## [1.0.0] - 2017-6-1
 - added AccountService setusername operation to modify the UserName property in an existing account
 
