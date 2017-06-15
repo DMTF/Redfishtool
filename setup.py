@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='redfishtool',
-      version='1.0.0',
+      version='1.0.1',
       description='Redfishtool package and command-line client',
       author='DMTF, https://www.dmtf.org/standards/feedback',
       license='BSD 3-clause "New" or "Revised License"',
@@ -14,8 +14,8 @@ setup(name='redfishtool',
       ],
       keywords='Redfish',
       url='https://github.com/DMTF/Redfishtool',
-      download_url='https://github.com/DMTF/Redfishtool/archive/1.0.0.tar.gz',
+      download_url='https://github.com/DMTF/Redfishtool/archive/1.0.1.tar.gz',
       packages=['redfishtool'],
-      scripts=['redfishtool.py'],
+      scripts=['scripts/redfishtool'],
       install_requires=['requests']
       )
