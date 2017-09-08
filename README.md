@@ -289,7 +289,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
      redfishtool -r <ip> -u <username> -p <password> Systems
 
      # Lists Id, Uri, AssetTag for all systems
-     redfishtool -r <ip> -u <username> -p< password> Systems list
+     redfishtool -r <ip> -u <username> -p <password> Systems list
 
      # Gets the system with Id=<d>
      redfishtool -r <ip> -u <username> -p <password> Systems -I <id>
