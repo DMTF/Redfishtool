@@ -126,7 +126,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
 ### Subcommand Operations and Addl Args
 
 ###### Systems Operations
-    python redfishtool.py -r <rhost> Systems -h
+    python redfishtool.py -r <rhost> -u <username> -p <password> Systems -h
     Usage:
      redfishtool [OPTNS]  Systems  <operation> [<args>]  -- perform <operation> on the system specified 
     <operations>:
@@ -156,7 +156,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
       hello                     -- Systems hello -- debug command
 
 ###### Chassis Operations
-     python redfishtool.py -r <rhost> Chassis -h
+     python redfishtool.py -r <rhost> -u <username> -p <password> Chassis -h
      Usage:
         redfishtool [OPTNS]  Chassis  <operation> [<args>]  -- perform <operation> on the Chassis specified
      <operations>:
@@ -182,7 +182,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
         hello                         -- Chassis hello -- debug command
     
 ###### Managers Operations
-    python redfishtool.py -r <rhost> Managers -h
+    python redfishtool.py -r <rhost> -u <username> -p <password> Managers -h
     Usage:
        redfishtool [OPTNS]  Managers  <operation> [<args>]  -- perform <operation> on the Managers specified
       <operations>:
@@ -210,7 +210,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
      hello                        -- Systems hello -- debug command
 
 ###### AccountService Operations
-    python redfishtool.py -r <rhost> AccountService -h
+    python redfishtool.py -r <rhost> -u <username> -p <password> AccountService -h
     Usage:
        redfishtool [OPTNS]  AccountService  <operation> [<args>]  -- perform <operation> on the AccountService
     <operations>:
@@ -231,7 +231,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
 
 
 ###### SessionService Operations
-    python redfishtool.py -r <rhost> SessionService -h
+    python redfishtool.py -r <rhost> -u <username> -p <password> SessionService -h
     Usage:
        redfishtool [OPTNS]  SessionService  <operation> [<args>]  -- perform <operation> on the SessionService
     <operations>:
@@ -248,7 +248,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
 
 
 ###### raw Operations
-    python redfishtool.py -r <rhost> raw -h
+    python redfishtool.py -r <rhost> -u <username> -p <password> raw -h
     Usage:
        redfishtool [OPTNS] raw <method> <path>
     
@@ -284,102 +284,207 @@ While other generic http clients such as Linux curl can send and receive Redfish
 
 ### System subcommand Examples
 
-    $ python redfishtool.py -r 127.0.0.1:5000 Systems examples
-     redfishtool -r<ip> Systems              # shows the systems collection
-     redfishtool -r<ip> Systems list         # lists Id, Uri, AssetTag for all systems
-     redfishtool -r<ip> Systems -I <id>      # gets the system with Id=<d>
-     redfishtool -r<ip> Systems -M AssetTag:12345 # gets the system with AssetTag=12345
-     redfishtool -r<ip> Systems -L <sysUrl>  # gets the system at URI=<systemUrl
-     redfishtool -r<ip> Systems -F           # get the First system returned (for debug)
-     redfishtool -r<ip> Systems -1           # get the first system and verify that there is only one system
-     redfishtool -r<ip> Systems -I <id> patch {A: B,C: D,...}   # patch the json-formated {prop: value...} 
-                                                                  data to the object
-     redfishtool -r<ip> Systems -I <id> reset <resetType>       # reset a system.  <resetType>=the redfish-defined 
-                                                               _# values: On, Off, gracefulOff...
-     redfishtool -r<ip> Systems -I <id> setAssetTag <assetTag>  # set the system's asset tag
-     redfishtool -r<ip> Systems -I <id> setIndicatorLed  <state>  # set the indicator LED.  
-                                                                   <state>=redfish defined values: Off, Lit, Blinking
-     redfishtool -r<ip> Systems -I <id> setBootOverride <enabledVal> <targetVal> # set Boot Override properties. 
-                                                                      <enabledVal>=Disabled|Once|Continuous
-     redfishtool -r<ip> Systems -I<Id> Processors# get the processors Collection
-     redfishtool -r<ip> Systems -I<Id> Processors list   # lists Id, Uri, & Socket for all processors in system w/ Id=<Id>
-     redfishtool -r<ip> Systems -I<Id> Processors -i 1   # get the processor with id=1 in system with Id=<Id>
-     redfishtool -r<ip> Systems -L <sysUrl> Processors -m Socket:CPU_1  # get proocessor with property Socket=CPU_1, 
-                                                                          on system at url <sysUrl>
-    
+    $ python redfishtool.py -r <ip> -u <username> -p <password> Systems examples
+     # Shows the Systems Collection
+     redfishtool -r <ip> -u <username> -p <password> Systems
+
+     # Lists Id, Uri, AssetTag for all systems
+     redfishtool -r <ip> -u <username> -p< password> Systems list
+
+     # Gets the system with Id=<d>
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <id>
+
+     # Gets the system with AssetTag=12345
+     redfishtool -r <ip> -u <username> -p <password> Systems -M AssetTag:12345
+
+     # Gets the system at URI=<systemUrl>
+     redfishtool -r <ip> -u <username> -p <password> Systems -L <systemUrl>
+
+     # Gets the first system returned (for debug)
+     redfishtool -r <ip> -u<username> -p<password> Systems -F
+
+     # Gets the first system and verify that there is only one system
+     redfishtool -r <ip> -u <username> -p <password> Systems -1
+
+     # Patches the json-formated {prop: value...}  data to the object
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <id> patch {A: B,C: D,...}
+
+     # Resets a system.  <resetType>=the redfish-defined values: On, Off, gracefulOff...
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <id> reset <resetType>
+
+     # Sets the system's asset tag to <assetTag>
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <id> setAssetTag <assetTag>
+
+     # Sets the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <id> setIndicatorLed <state>
+
+     # Sets Boot Override properties.  <enabledVal>=Disabled|Once|Continuous
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <id> setBootOverride <enabledVal> <targetVal>
+
+     # Gets the Processor Collection
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <Id> Processors
+
+     # Lists Id, Uri, & Socket for all processors in system w/ Id=<Id>
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <Id> Processors list
+
+     # Gets the processor with id=1 in system with Id=<Id>
+     redfishtool -r <ip> -u <username> -p <password> Systems -I <Id> Processors -i 1
+
+     # Gets processor with property Socket=CPU_1, on system at url <sysUrl>
+     redfishtool -r <ip> -u <username> -p <password> Systems -L <sysUrl> Processors -m Socket:CPU_1
+
 ### Chassis subcommand Examples
-    $ python redfishtool.py -r 127.0.0.1:5000 Chassis examples
-     redfishtool -r<ip> Chassis  # shows the Chassis collection
-     redfishtool -r<ip> Chassis list # lists Id, Uri, AssetTag for all Chassis
-     redfishtool -r<ip> Chassis -I <id>  # gets the Chassis with Id=<d>
-     redfishtool -r<ip> Chassis -M AssetTag:12345# gets the Chassis with AssetTag=12345
-     redfishtool -r<ip> Chassis -L <sysUrl>  # gets the Chassis at URI=<systemUrl
-     redfishtool -r<ip> Chassis -F   # get the First Chassis returned (for debug)
-     redfishtool -r<ip> Chassis -1   # get the first Chassis and verify that there is only one system
-     redfishtool -r<ip> Chassis -I <id> patch {A: B,C: D,...} # patch the json-formated {prop: value...} data 
-                                                                to the object
-     redfishtool -r<ip> Chassis -I <id> setAssetTag <assetTag># set the system's asset tag
-     redfishtool -r<ip> Chassis -I <id> setIndicatorLed  <state>  # set the indicator LED.  
-                                                                    <state>=redfish defined values: Off, Lit, Blinking
-     redfishtool -r<ip> Chassis -I<Id> Power # get the full chassis Power resource
-     redfishtool -r<ip> Chassis -I<Id> Thermal   # get the full chassis Thermal resource
-     redfishtool -r<ip> Chassis -I<Id> getPowerReading[-i<indx> [consumed]   # get chassis/Power powerControl[<indx>] 
-                                    resource if optional "consumed" arg, then return only the PowerConsumedWatts prop
-     redfishtool -r<ip> Chassis -L<Url> setPowerLimit [-i<indx>] <limit> [<exception> [<correctionTime>]] 
-                                    _# set power limit
+
+    $ python redfishtool.py -r <ip> -u <username> -p <password> Chassis examples
+     # Shows the Chassis Collection
+     redfishtool -r <ip> -u <username> -p <password> Chassis
+
+     # Lists Id, Uri, AssetTag for all Chassis
+     redfishtool -r <ip> -u <username> -p <password> Chassis list
+
+     # Gets the Chassis with Id=<d>
+     redfishtool -r <ip> -u <username> -p <password> Chassis -I <id>
+
+     # Gets the Chassis with AssetTag=12345
+     redfishtool -r <ip> -u <username> -p <password> Chassis -M AssetTag:12345
+
+     # Gets the Chassis at URI=<chassisUrl>
+     redfishtool -r <ip> -u <username> -p <password> Chassis -L <chassisUrl>
+
+     # Gets the first Chassis returned (for debug)
+     redfishtool -r <ip> -u <username> -p <password> Chassis -F
+
+     # Gets the first Chassis and verify that there is only one system
+     redfishtool -r <ip> -u <username> -p <password> Chassis -1
+
+     # Patches the json-formated {prop: value...} data to the object
+     redfishtool -r <ip> -u <username> -p <password> Chassis -I <id> patch {A: B,C: D,...}
+
+     # Sets the chassis's asset tag
+     redfishtool -r <ip> -u <username> -p <password> Chassis -I <id> setAssetTag <assetTag>
+
+     # Sets the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
+     redfishtool -r <ip> -u <username> -p <password> Chassis -I <id> setIndicatorLed <state>
+
+     # Gets the full chassis Power resource
+     redfishtool -r <ip> -u <username> -p <password> Chassis -I <Id> Power
+
+     # Gets the full chassis Thermal resource
+     redfishtool -r <ip> -u <username> -p <password> Chassis -I <Id> Thermal
+
+     # Gets chassis/Power powerControl[<indx>] resource if optional "consumed" arg, then return only the PowerConsumedWatts prop
+     redfishtool -r <ip> -u <username> -p <password> Chassis -I <Id> getPowerReading[-i<indx> [consumed]
+
+     # Sets the power limit
+     redfishtool -r <ip> -u <username> -p <password> Chassis -L<Url> setPowerLimit [-i<indx>] <limit> [<exception> [<correctionTime>]]
 
 ### Managers subcommand Examples
-    $ python redfishtool.py -r 127.0.0.1:5000 Managers examples
-     redfishtool -r<ip>   # shows the Managers collection
-     redfishtool -r<ip> Managers list              # lists Id, Uri, AssetTag for all Managers
-     redfishtool -r<ip> Managers -I <id>           # gets the Manager with Id=<d>
-     redfishtool -r<ip> Managers -M AssetTag:12345 # gets the Manager with AssetTag=12345
-     redfishtool -r<ip> Managers -L <mgrUrl>       # gets the Manager at URI=<mgrUrl
-     redfishtool -r<ip> Managers -F                # get the First Manager returned (for debug)
-     redfishtool -r<ip> Managers -1                # get the first Manager and verify that there is only one Manager
-     redfishtool -r<ip> Managers -I <id> patch {A: B,C: D,...} # patch the json-formated {prop: value...} data 
-                                                                 to the object
-     redfishtool -r<ip> Managers -I <id> reset <resetType>     # reset a Manager.  
-                                                     <resetType>=the redfish-defined values: On, Off, gracefulOff...
-     redfishtool -r<ip> Managers -I<Id> NetworkProtocol         # get the NetworkProtocol resource under the
-                                                                  specified manager
-     redfishtool -r<ip> Managers -I<Id> EthernetInterfaces list # lists Id, Uri, and Name for all of the NICs 
-                                                                  for Manager w/ Id=<Id>
-     redfishtool -r<ip> Managers -I<Id> EthernetInterfaces -i 1 # get the NIC with id=1 in manager with Id=<Id>
-     redfishtool -r<ip> Managers -L <Url> EthernetInterfaces -m MACAddress:AA:BB:CC:DD:EE:FF # get NIC with MAC AA:BB... 
-                                                                                               for manager at url <Url>
+
+    $ python redfishtool.py -r <ip> -u <username> -p <password> Managers examples
+     # Shows the Managers Collection
+     redfishtool -r <ip> -u <username> -p <password>
+
+     # Lists Id, Uri, AssetTag for all Managers
+     redfishtool -r <ip> -u <username> -p <password> Managers list
+
+     # Gets the Manager with Id=<d>
+     redfishtool -r <ip> -u <username> -p <password> Managers -I <id>
+
+     # Gets the Manager with AssetTag=12345
+     redfishtool -r <ip> -u <username> -p <password> Managers -M AssetTag:12345
+
+     # Gets the Manager at URI=<mgrUrl>
+     redfishtool -r <ip> -u <username> -p <password> Managers -L <mgrUrl>
+
+     # Gets the first Manager returned (for debug)
+     redfishtool -r <ip> -u <username> -p <password> Managers -F
+
+     # Gets the first Manager and verify that there is only one Manager
+     redfishtool -r <ip> -u <username> -p <password> Managers -1
+
+     # Patches the json-formated {prop: value...} data to the object
+     redfishtool -r <ip> -u <username> -p <password> Managers -I <id> patch {A: B,C: D,...}
+
+     # Resets a Manager.  <resetType>=the redfish-defined values: On, Off, gracefulOff...
+     redfishtool -r <ip> -u <username> -p <password> Managers -I <id> reset <resetType>
+
+     # Gets the NetworkProtocol resource under the specified manager
+     redfishtool -r <ip> -u <username> -p <password> Managers -I <Id> NetworkProtocol
+
+     # Lists Id, Uri, and Name for all of the NICs for Manager w/ Id=<Id>
+     redfishtool -r <ip> -u <username> -p <password> Managers -I <Id> EthernetInterfaces list
+
+     # Gets the NIC with id=1 in manager with Id=<Id>
+     redfishtool -r <ip> -u <username> -p <password> Managers -I <Id> EthernetInterfaces -i 1
+
+     # Gets the NIC with MAC AA:BB:CC:DD:EE:FF for manager at url <Url>
+     redfishtool -r <ip> -u <username> -p <password> Managers -L <Url> EthernetInterfaces -m MACAddress:AA:BB:CC:DD:EE:FF 
 
 ### AccountService subcommand Examples
-    $ python redfishtool.py -r 127.0.0.1:5000 AccountService examples
-     redfishtool -r<ip> AccountService                # gets the AccountService
-     redfishtool -r<ip> AccountService patch { "AccountLockoutThreshold": 5 } ]# set failed login lockout threshold
-     redfishtool -r<ip> AccountService Accounts       # gets Accounts collection
-     redfishtool -r<ip> AccountService Accounts list  # list Accounts to get Id, username, url for each account
-     redfishtool -r<ip> AccountService Accounts -mUserName:john # gets the Accounts member with username: john
-     redfishtool -r<ip> AccountService Roles  list    # list Roles collection to get RoleId, IsPredefined, & url
-                                                        for each role
-     redfishtool -r<ip> AccountService Roles   -iAdmin          # gets the Roles member with RoleId=Admin
-     redfishtool -r<ip> AccountService adduser john 12345 Admin # add new user (john) w/ passwd "12345" and role: Admin
-     redfishtool -r<ip> AccountService deleteuser john          # delete user "john"s account
-     redfishtool -r<ip> AccountService useradmin john disable   # disable user "john"s account
-     redfishtool -r<ip> AccountService useradmin john unlock    # unlock user "john"s account
-     redfishtool -r<ip> AccountService setusername 3 alice      # set username for account with id=3 to "alice"
 
+    $ python redfishtool.py -r <ip> -u <username> -p <password> AccountService examples
+     # Gets the AccountService
+     redfishtool -r <ip> -u <username> -p <password> AccountService
+
+     # Sets the failed login lockout threshold
+     redfishtool -r <ip> -u <username> -p <password> AccountService patch { "AccountLockoutThreshold": 5 } ]
+
+     # Gets the Accounts collection
+     redfishtool -r <ip> -u <username> -p <password> AccountService Accounts
+
+     # List Accounts to get Id, username, url for each account
+     redfishtool -r <ip> -u <username> -p <password> AccountService Accounts list
+
+     # Gets the Accounts member with username: john
+     redfishtool -r <ip> -u <username> -p <password> AccountService Accounts -m UserName:john
+
+     # Lists the Roles collection to get RoleId, IsPredefined, & url for each role
+     redfishtool -r <ip> -u <username> -p <password> AccountService Roles list
+
+     # Gets the Roles member with RoleId=Admin
+     redfishtool -r <ip> -u <username> -p <password> AccountService Roles -i Admin
+
+     # Adds the new user (john) w/ passwd "12345" and role: Admin
+     redfishtool -r <ip> -u <username> -p <password> AccountService adduser john 12345 Admin
+
+     # Deletes the account with the username "john"
+     redfishtool -r <ip> -u <username> -p <password> AccountService deleteuser john
+
+     # Disables the account with the username "john"
+     redfishtool -r <ip> -u <username> -p <password> AccountService useradmin john disable
+
+     # Unlocks the account with the username "john"
+     redfishtool -r <ip> -u <username> -p <password> AccountService useradmin john unlock
+
+     # Sets the username for account with id=3 to "alice"
+     redfishtool -r <ip> -u <username> -p <password> AccountService setusername 3 alice
 
 ### SessionService subcommand Examples
-    $ python redfishtool.py -r 127.0.0.1:5000 SessionService examples
-     redfishtool -r<ip> SessionService                             # gets the sessionService
-     redfishtool -r<ip> SessionService setSessionTimeout <timeout> # sets the session timeout property
-     redfishtool -r<ip> SessionService Sessions                    # gets Sessions collection
-     redfishtool -r<ip> SessionService Sessions -l<sessUrl>        # gets the session at URI=<sessUrl
-     redfishtool -r<ip> SessionService Sessions -i<sessId>         # gets the session with session Id <sessId>
-     redfishtool -r<ip> SessionService patch {A: B,C: D,...}       # patch the json-formated {prop: value...} 
-                                                                     data to the sessionService object
-     redfishtool -r<ip> SessionService login -u<user> -p<password> # login (create session)
-     redfishtool -r<ip> SessionService logout  -i<sessionId>       # logout (delete session <sessId>
 
+    $ python redfishtool.py -r <ip> -u <username> -p <password> SessionService examples
+     # Gets the sessionService
+     redfishtool -r <ip> -u <username> -p <password> SessionService
 
+     # Sets the session timeout property
+     redfishtool -r <ip> -u <username> -p <password> SessionService setSessionTimeout <timeout>
 
+     # Gets Sessions collection
+     redfishtool -r <ip> -u <username> -p <password> SessionService Sessions
+
+     # Gets the session at URI=<sessUrl>
+     redfishtool -r <ip> -u <username> -p <password> SessionService Sessions -l <sessUrl>
+
+     # Gets the session with session Id <sessId>
+     redfishtool -r <ip> -u <username> -p <password> SessionService Sessions -i <sessId>
+
+     # Patches the json-formated {prop: value...} data to the sessionService object
+     redfishtool -r <ip> -u <username> -p <password> SessionService patch {A: B,C: D,...}
+
+     # Login (create session)
+     redfishtool -r <ip> -u <username> -p <password> SessionService login -u <user> -p <password>
+
+     # Logout (delete session <sessId>)
+     redfishtool -r <ip> -u <username> -p <password> SessionService logout -i <sessionId>
 
 # Known Issues, and ToDo Enhancements
 
@@ -387,6 +492,3 @@ While other generic http clients such as Linux curl can send and receive Redfish
 2. support clearlog
 3. add additional APIs that have been added to Redfish after 1.0---this version supports only 1.0 APIs
 4. add custom role create and delete
-
-
-
