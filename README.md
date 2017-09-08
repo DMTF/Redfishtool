@@ -301,7 +301,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
      redfishtool -r <ip> -u <username> -p <password> Systems -L <systemUrl>
 
      # Gets the first system returned (for debug)
-     redfishtool -r <ip> -u<username> -p<password> Systems -F
+     redfishtool -r <ip> -u <username> -p <password> Systems -F
 
      # Gets the first system and verify that there is only one system
      redfishtool -r <ip> -u <username> -p <password> Systems -1
