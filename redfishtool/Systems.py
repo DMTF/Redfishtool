@@ -337,13 +337,19 @@ class RfSystemsOperations():
             if( "ResetType@Redfish.AllowableValues" in resetProps ):
                 supportedResetTypes=resetProps["ResetType@Redfish.AllowableValues"]
                 if not resetType in supportedResetTypes:
-                    rft.printErr("Error, the resetType specified is not supported by the remote service")
+                    rft.printErr("Error, the resetType specified is not supported by the remote service (via @Redfish.AllowableValues)")
+                    return(8,None,False,None)
+            elif "@Redfish.ActionInfo" in resetProps:
+                action_info_path = resetProps["@Redfish.ActionInfo"]
+                supportedResetTypes = rft.getActionInfoAllowableValues(rft, r, action_info_path, "ResetType")
+                if resetType not in supportedResetTypes:
+                    rft.printErr("Error, the resetType specified is not supported by the remote service (via @Redfish.ActionInfo)")
                     return(8,None,False,None)
             else: # rhost didn't return any AllowableValues.  So this tool will not try to set it!
-                rft.printErr("Error, the remote service doesnt have a resetType allowableValues prop")
+                rft.printErr("Error, the remote service does not have a ResetType@Redfish.AllowableValues or @Redfish.ActionInfo prop")
                 return(8,None,False,None)
         else:
-            rft.printErr("Error, the remote service doesnt have an Actions: ComputerSystem.Reset property")
+            rft.printErr("Error, the remote service does not have an Actions: ComputerSystem.Reset property")
             return(8,None,False,None)
         
         # now get the target URI from the remote host
@@ -489,14 +495,24 @@ class RfSystemsOperations():
                 rft.printErr("        <enableVal>=Disabled|Once|Continuous, <targetVal>=None,Pxe,BiosSetup...")
                 return(8,None,False,None)
 
-            if( (j is True) and ("Boot" in d) and ("BootSourceOverrideTarget@Redfish.AllowableValues" in d["Boot"])):
-                rhostSupportedTargets=d["Boot"]["BootSourceOverrideTarget@Redfish.AllowableValues"]
-                if not targetVal in rhostSupportedTargets:
-                    rft.printErr("Error, the boot target specified is not supported by the remote service")
+            if( (j is True) and ("Boot" in d) ):
+                if "BootSourceOverrideTarget@Redfish.AllowableValues" in d["Boot"]:
+                    rhostSupportedTargets=d["Boot"]["BootSourceOverrideTarget@Redfish.AllowableValues"]
+                    if not targetVal in rhostSupportedTargets:
+                        rft.printErr("Error, the boot target specified is not supported by the remote service (via @Redfish.AllowableValues)")
+                        return(8,None,False,None)
+                elif "@Redfish.ActionInfo" in d["Boot"]:
+                    action_info_path = d["Boot"]["@Redfish.ActionInfo"]
+                    rhostSupportedTargets = rft.getActionInfoAllowableValues(rft, r, action_info_path, "BootSourceOverrideTarget")
+                    if targetVal not in rhostSupportedTargets:
+                        rft.printErr("Error, the boot target specified is not supported by the remote service (via @Redfish.ActionInfo)")
+                        return (8, None, False, None)
+                else: # rhost didn't return any AllowableValues.  So this tool will not try to set it!
+                    rft.printErr("Error, the remote service does not have a BootSourceOverrideTarget@Redfish.AllowableValues or @Redfish.ActionInfo prop")
                     return(8,None,False,None)
-            else: # rhost didn't return any AllowableValues.  So this tool will not try to set it!
-                    rft.printErr("Error, the remote service doesnt have a Boot: BootSourceOverrideTarget allowableValues prop")
-                    return(8,None,False,None)
+            else:
+                rft.printErr("Error, the remote service does not have a Boot prop")
+                return (8, None, False, None)
                 
             # verify that they have a BootSourceOverrideEnabled and BootSourceOverrideTarget prop
             if(  not "BootSourceOverrideTarget" in bootRes ):

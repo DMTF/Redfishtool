@@ -329,13 +329,19 @@ class RfManagersOperations():
             if( "ResetType@Redfish.AllowableValues" in resetProps ):
                 supportedResetTypes=resetProps["ResetType@Redfish.AllowableValues"]
                 if not resetType in supportedResetTypes:
-                    rft.printErr("Error, the resetType specified is not supported by the remote service")
+                    rft.printErr("Error, the resetType specified is not supported by the remote service (via @Redfish.AllowableValues)")
+                    return(8,None,False,None)
+            elif "@Redfish.ActionInfo" in resetProps:
+                action_info_path = resetProps["@Redfish.ActionInfo"]
+                supportedResetTypes = rft.getActionInfoAllowableValues(rft, r, action_info_path, "ResetType")
+                if resetType not in supportedResetTypes:
+                    rft.printErr("Error, the resetType specified is not supported by the remote service (via @Redfish.ActionInfo)")
                     return(8,None,False,None)
             else: # rhost didn't return any AllowableValues.  So this tool will not try to set it!
-                rft.printErr("Error, the remote service doesnt have a resetType allowableValues prop")
+                rft.printErr("Error, the remote service does not have a ResetType@Redfish.AllowableValues or @Redfish.ActionInfo prop")
                 return(8,None,False,None)
         else:
-            rft.printErr("Error, the remote service doesnt have an Actions: ComputerSystem.Reset property")
+            rft.printErr("Error, the remote service does not have an Actions: Manager.Reset property")
             return(8,None,False,None)
         
         # now get the target URI from the remote host
