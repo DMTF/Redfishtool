@@ -1142,7 +1142,7 @@ class RfTransport():
         return(namespace, version, resourceType)
 
     def getActionInfoAllowableValues(self, rft, r, relPath, paramName):
-        allowable_values = list()
+        allowable_values = None
         rc, r, j, d = rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=relPath)
         if rc == 0 and j and d is not None:
             if "Parameters" in d and isinstance(d["Parameters"], list):

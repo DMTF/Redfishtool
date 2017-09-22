@@ -316,7 +316,7 @@ class RfSystemsOperations():
         
         # get the resetType from args
         validResetTypes=["On","ForceOff","GracefulShutdown","ForceRestart","Nmi","GracefulRestart",
-                                    "ForceOn","PushPowerButton"]
+                                    "ForceOn","PushPowerButton","PowerCycle"]
         if(len(sc.args) < 2 ):
             rft.printErr("Error, no resetType value specified")
             return(8,None,False,None)
@@ -342,12 +342,11 @@ class RfSystemsOperations():
             elif "@Redfish.ActionInfo" in resetProps:
                 action_info_path = resetProps["@Redfish.ActionInfo"]
                 supportedResetTypes = rft.getActionInfoAllowableValues(rft, r, action_info_path, "ResetType")
-                if resetType not in supportedResetTypes:
+                if supportedResetTypes is not None and resetType not in supportedResetTypes:
                     rft.printErr("Error, the resetType specified is not supported by the remote service (via @Redfish.ActionInfo)")
                     return(8,None,False,None)
-            else: # rhost didn't return any AllowableValues.  So this tool will not try to set it!
-                rft.printErr("Error, the remote service does not have a ResetType@Redfish.AllowableValues or @Redfish.ActionInfo prop")
-                return(8,None,False,None)
+            else: # rhost didn't return any AllowableValues, but it isn't required, so allow the action
+                rft.printVerbose(2, "The remote service does not have a ResetType@Redfish.AllowableValues or @Redfish.ActionInfo prop")
         else:
             rft.printErr("Error, the remote service does not have an Actions: ComputerSystem.Reset property")
             return(8,None,False,None)
@@ -504,12 +503,11 @@ class RfSystemsOperations():
                 elif "@Redfish.ActionInfo" in d["Boot"]:
                     action_info_path = d["Boot"]["@Redfish.ActionInfo"]
                     rhostSupportedTargets = rft.getActionInfoAllowableValues(rft, r, action_info_path, "BootSourceOverrideTarget")
-                    if targetVal not in rhostSupportedTargets:
+                    if rhostSupportedTargets is not None and targetVal not in rhostSupportedTargets:
                         rft.printErr("Error, the boot target specified is not supported by the remote service (via @Redfish.ActionInfo)")
                         return (8, None, False, None)
-                else: # rhost didn't return any AllowableValues.  So this tool will not try to set it!
-                    rft.printErr("Error, the remote service does not have a BootSourceOverrideTarget@Redfish.AllowableValues or @Redfish.ActionInfo prop")
-                    return(8,None,False,None)
+                else: # rhost didn't return any AllowableValues, but it isn't required, so allow the action
+                    rft.printVerbose(2, "The remote service does not have a BootSourceOverrideTarget@Redfish.AllowableValues or @Redfish.ActionInfo prop")
             else:
                 rft.printErr("Error, the remote service does not have a Boot prop")
                 return (8, None, False, None)
