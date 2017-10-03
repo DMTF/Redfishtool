@@ -154,7 +154,7 @@ class RfSystemsMain():
         rft.printVerbose(5,"Systems: operation={}, args={}".format(self.operation,self.args))
                 
         # check if the command requires a collection member target -I|-M|-L|-1|-F eg sysIdoptn
-        nonIdCommands=["collection", "list", "examples", "hello"]
+        nonIdCommands=["collection", "list", "examples", "hello", "reset"]
         if( ( not self.operation in nonIdCommands ) and (rft.IdOptnCount==0) ):
             rft.printErr("Systems: Syntax error: [-I|-M|-L|-F|-1] required for action that targets a specific system instance")
             return(0,None,False,None)
@@ -307,7 +307,7 @@ class RfSystemsOperations():
         return(rc,r,j,d)
 
 
-    def reset(self,sc,op,rft,cmdTop=False, prop=None):
+    def reset_single(self,sc,op,rft,cmdTop=False, prop=None):
         # this operation has argument syntaxes below:
         #     ...reset <resetType>
         #   where <resetType> is a subset of Redfish defined redfish resetType values
@@ -363,6 +363,7 @@ class RfSystemsOperations():
         #output the post data in json to send over the network   
         reqPostData=json.dumps(resetData)           
         # send post to rhost.  Use the resetPath as the relative path
+        rft.printVerbose(1, 'Posting reset command to target {}'.format(resetPath))
         rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'POST', r.url, relPath=resetPath,
                                          reqData=reqPostData)
                    
@@ -373,7 +374,47 @@ class RfSystemsOperations():
         else: return(rc,r,False,None)
 
 
-        
+    def reset(self, sc, op, rft, cmdTop=False, prop=None):
+        # Wrapper method to handle issuing reset command to single system or to all systems in collection
+        if rft.allOptn:
+            # Apply reset command to all systems in collection
+            # get the list of systems
+            rc, r, j, d = op.list(sc, op, rft, cmdTop=cmdTop, prop=prop)
+            if rc != 0 or not j or d is None or not isinstance(d, dict) or 'Members' not in d:
+                rft.printErr("Unable to get list of Systems; return code = {}, list data = {}".format(rc, d))
+                return rc, r, j, d
+            members = d.get('Members')
+            # save existing rft options
+            saved_allOptn = rft.allOptn
+            saved_Link = rft.Link
+            saved_gotIdOptn = rft.gotIdOptn
+            saved_IdOptnCount = rft.IdOptnCount
+            # set rft options to process a single item
+            rft.allOptn = False
+            rft.gotIdOptn = True
+            rft.IdOptnCount = 1
+            rc, r, j, d = 8, None, False, None
+            # iterate through systems and perform reset on each based on the link (@odata.id value)
+            for member in members:
+                if '@odata.id' in member:
+                    link = member.get('@odata.id')
+                    # set rft.Link to point to the system to reset
+                    rft.Link = link
+                    # perform the reset
+                    rc, r, j, d = op.reset_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+                else:
+                    rft.printErr("No '@odata.id' found in system member: {}".format(member))
+            # restore existing rft options
+            rft.allOptn = saved_allOptn
+            rft.Link = saved_Link
+            rft.gotIdOptn = saved_gotIdOptn
+            rft.IdOptnCount = saved_IdOptnCount
+            return rc, r, j, d
+        else:
+            # Apply reset command to single specified system
+            return op.reset_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
     def setAssetTag(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
