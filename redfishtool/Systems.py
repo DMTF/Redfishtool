@@ -375,9 +375,13 @@ class RfSystemsOperations():
 
 
     def reset(self, sc, op, rft, cmdTop=False, prop=None):
-        # Wrapper method to handle issuing reset command to single system or to all systems in collection
+        return op.iterate_op(op.reset_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def iterate_op(self, run_single, sc, op, rft, cmdTop=False, prop=None):
+        # Wrapper method to handle issuing commands to single system or to all systems in collection
         if rft.allOptn:
-            # Apply reset command to all systems in collection
+            # Issue command to all systems in collection
             # get the list of systems
             rc, r, j, d = op.list(sc, op, rft, cmdTop=cmdTop, prop=prop)
             if rc != 0 or not j or d is None or not isinstance(d, dict) or 'Members' not in d:
@@ -394,14 +398,14 @@ class RfSystemsOperations():
             rft.gotIdOptn = True
             rft.IdOptnCount = 1
             rc, r, j, d = 8, None, False, None
-            # iterate through systems and perform reset on each based on the link (@odata.id value)
+            # iterate through systems and run operation on each based on the link (@odata.id value)
             for member in members:
                 if '@odata.id' in member:
                     link = member.get('@odata.id')
-                    # set rft.Link to point to the system to reset
+                    # set rft.Link to point to the target system
                     rft.Link = link
-                    # perform the reset
-                    rc, r, j, d = op.reset_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+                    # perform the operation
+                    rc, r, j, d = run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
                 else:
                     rft.printErr("No '@odata.id' found in system member: {}".format(member))
             # restore existing rft options
@@ -411,8 +415,8 @@ class RfSystemsOperations():
             rft.IdOptnCount = saved_IdOptnCount
             return rc, r, j, d
         else:
-            # Apply reset command to single specified system
-            return op.reset_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+            # Issue command to single specified system
+            return run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
 
 
     def setAssetTag(self,sc,op,rft,cmdTop=False, prop=None):
