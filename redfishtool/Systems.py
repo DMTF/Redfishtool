@@ -154,7 +154,8 @@ class RfSystemsMain():
         rft.printVerbose(5,"Systems: operation={}, args={}".format(self.operation,self.args))
                 
         # check if the command requires a collection member target -I|-M|-L|-1|-F eg sysIdoptn
-        nonIdCommands=["collection", "list", "examples", "hello", "reset"]
+        nonIdCommands=["collection", "list", "examples", "hello", "reset", "patch", "setAssetTag",
+                       "setIndicatorLed", "setBootOverride"]
         if( ( not self.operation in nonIdCommands ) and (rft.IdOptnCount==0) ):
             rft.printErr("Systems: Syntax error: [-I|-M|-L|-F|-1] required for action that targets a specific system instance")
             return(0,None,False,None)
@@ -273,7 +274,7 @@ class RfSystemsOperations():
         return(rc,r,j,d)
 
     
-    def patch(self,sc,op,rft,cmdTop=False, prop=None, patchData=None, r=None):
+    def patch_single(self,sc,op,rft,cmdTop=False, prop=None, patchData=None, r=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         # verify we have got an argument which is the patch structure
         # its in form '{ "AssetTag": <val>, "IndicatorLed": <val> }'
@@ -305,6 +306,10 @@ class RfSystemsOperations():
 
         if(rc==0):   rft.printVerbose(1," Systems Patch:",skip1=True, printV12=cmdTop)
         return(rc,r,j,d)
+
+
+    def patch(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.patch_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
 
 
     def reset_single(self,sc,op,rft,cmdTop=False, prop=None):
@@ -419,7 +424,7 @@ class RfSystemsOperations():
             return run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
 
 
-    def setAssetTag(self,sc,op,rft,cmdTop=False, prop=None):
+    def setAssetTag_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
         propName="AssetTag"
@@ -448,7 +453,11 @@ class RfSystemsOperations():
         else: return(rc,r,False,None)
 
 
-    def setIndicatorLed(self,sc,op,rft,cmdTop=False, prop=None):
+    def setAssetTag(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setAssetTag_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def setIndicatorLed_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
         propName="IndicatorLED"
@@ -482,7 +491,11 @@ class RfSystemsOperations():
         else: return(rc,r,False,None)
 
 
-    def setBootOverride(self,sc,op,rft,cmdTop=False, prop=None):
+    def setIndicatorLed(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setIndicatorLed_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def setBootOverride_single(self,sc,op,rft,cmdTop=False, prop=None):
         # this operation has argument syntaxes below:
         #     ...setBootOverride <enabledVal> [<targetVal>]
         #       where <targetVal> is not required if enabledVal==Disabled
@@ -575,6 +588,10 @@ class RfSystemsOperations():
             return(rc,r,j,bootd)
         
         else: return(rc,r,False,None)
+
+
+    def setBootOverride(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setBootOverride_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
 
 
     def getProcessors(self,sc,op, rft, cmdTop=False, prop=None):
