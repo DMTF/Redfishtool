@@ -306,20 +306,35 @@ While other generic http clients such as Linux curl can send and receive Redfish
      # Gets the first system and verify that there is only one system
      redfishtool -r <ip> -u <username> -p <password> Systems -1
 
-     # Patches the json-formated {prop: value...}  data to the object
+     # Patches the json-formated {prop: value...} data to the specified system
      redfishtool -r <ip> -u <username> -p <password> Systems -I <id> patch {A: B,C: D,...}
+
+     # Patches the json-formated {prop: value...} data to all systems
+     redfishtool -r <ip> -u <username> -p <password> Systems --all patch {A: B,C: D,...}
 
      # Resets a system.  <resetType>=the redfish-defined values: On, Off, gracefulOff...
      redfishtool -r <ip> -u <username> -p <password> Systems -I <id> reset <resetType>
 
+     # Resets all systems.  <resetType>=the redfish-defined values: On, Off, gracefulOff...
+     redfishtool -r <ip> -u <username> -p <password> Systems --all reset <resetType>
+
      # Sets the system's asset tag to <assetTag>
      redfishtool -r <ip> -u <username> -p <password> Systems -I <id> setAssetTag <assetTag>
+
+     # Sets all system's asset tags to <assetTag>
+     redfishtool -r <ip> -u <username> -p <password> Systems --all setAssetTag <assetTag>
 
      # Sets the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
      redfishtool -r <ip> -u <username> -p <password> Systems -I <id> setIndicatorLed <state>
 
+     # Sets the indicator LED on all systems. <state>=redfish defined values: Off, Lit, Blinking
+     redfishtool -r <ip> -u <username> -p <password> Systems --all setIndicatorLed <state>
+
      # Sets Boot Override properties.  <enabledVal>=Disabled|Once|Continuous
      redfishtool -r <ip> -u <username> -p <password> Systems -I <id> setBootOverride <enabledVal> <targetVal>
+
+     # Sets Boot Override properties on all systems.  <enabledVal>=Disabled|Once|Continuous
+     redfishtool -r <ip> -u <username> -p <password> Systems --all setBootOverride <enabledVal> <targetVal>
 
      # Gets the Processor Collection
      redfishtool -r <ip> -u <username> -p <password> Systems -I <Id> Processors
@@ -357,14 +372,23 @@ While other generic http clients such as Linux curl can send and receive Redfish
      # Gets the first Chassis and verify that there is only one system
      redfishtool -r <ip> -u <username> -p <password> Chassis -1
 
-     # Patches the json-formated {prop: value...} data to the object
+     # Patches the json-formated {prop: value...} data to the specified chassis
      redfishtool -r <ip> -u <username> -p <password> Chassis -I <id> patch {A: B,C: D,...}
+
+     # Patches the json-formated {prop: value...} data to all chassis
+     redfishtool -r <ip> -u <username> -p <password> Chassis --all patch {A: B,C: D,...}
 
      # Sets the chassis's asset tag
      redfishtool -r <ip> -u <username> -p <password> Chassis -I <id> setAssetTag <assetTag>
 
+     # Sets all chassis's asset tags
+     redfishtool -r <ip> -u <username> -p <password> Chassis --all setAssetTag <assetTag>
+
      # Sets the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
      redfishtool -r <ip> -u <username> -p <password> Chassis -I <id> setIndicatorLed <state>
+
+     # Sets the indicator LED on all chassis.  <state>=redfish defined values: Off, Lit, Blinking
+     redfishtool -r <ip> -u <username> -p <password> Chassis --all setIndicatorLed <state>
 
      # Gets the full chassis Power resource
      redfishtool -r <ip> -u <username> -p <password> Chassis -I <Id> Power
@@ -377,6 +401,9 @@ While other generic http clients such as Linux curl can send and receive Redfish
 
      # Sets the power limit
      redfishtool -r <ip> -u <username> -p <password> Chassis -L<Url> setPowerLimit [-i<indx>] <limit> [<exception> [<correctionTime>]]
+
+     # Sets the power limit on all chassis
+     redfishtool -r <ip> -u <username> -p <password> Chassis --all setPowerLimit [-i<indx>] <limit> [<exception> [<correctionTime>]]
 
 ### Managers subcommand Examples
 

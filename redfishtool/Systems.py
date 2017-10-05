@@ -154,7 +154,8 @@ class RfSystemsMain():
         rft.printVerbose(5,"Systems: operation={}, args={}".format(self.operation,self.args))
                 
         # check if the command requires a collection member target -I|-M|-L|-1|-F eg sysIdoptn
-        nonIdCommands=["collection", "list", "examples", "hello"]
+        nonIdCommands=["collection", "list", "examples", "hello", "reset", "patch", "setAssetTag",
+                       "setIndicatorLed", "setBootOverride"]
         if( ( not self.operation in nonIdCommands ) and (rft.IdOptnCount==0) ):
             rft.printErr("Systems: Syntax error: [-I|-M|-L|-F|-1] required for action that targets a specific system instance")
             return(0,None,False,None)
@@ -272,8 +273,54 @@ class RfSystemsOperations():
             rft.printVerbose(1," list {} Collection member info: Id, URI, AssetTag".format(collName,skip1=True, printV12=cmdTop))
         return(rc,r,j,d)
 
-    
-    def patch(self,sc,op,rft,cmdTop=False, prop=None, patchData=None, r=None):
+
+    def iterate_op(self, run_single, sc, op, rft, cmdTop=False, prop=None):
+        # Wrapper method to handle issuing commands to a single system or to all systems in the collection
+        if rft.allOptn:
+            # Issue command to all systems in collection
+
+            # get the list of systems
+            rc, r, j, d = op.list(sc, op, rft, cmdTop=cmdTop, prop=prop)
+            if rc != 0 or not j or d is None or not isinstance(d, dict) or 'Members' not in d:
+                rft.printErr("Unable to get list of Systems; return code = {}, list data = {}".format(rc, d))
+                return rc, r, j, d
+
+            # save existing rft options
+            saved_allOptn = rft.allOptn
+            saved_Link = rft.Link
+            saved_gotIdOptn = rft.gotIdOptn
+            saved_IdOptnCount = rft.IdOptnCount
+
+            # set rft options to process a single item
+            rft.allOptn = False
+            rft.gotIdOptn = True
+            rft.IdOptnCount = 1
+
+            # iterate through systems and run operation on each based on the link (@odata.id value)
+            members = d.get('Members')
+            rc, r, j, d = 8, None, False, None
+            for member in members:
+                if '@odata.id' in member:
+                    link = member.get('@odata.id')
+                    # set rft.Link to point to the target system
+                    rft.Link = link
+                    # perform the operation
+                    rc, r, j, d = run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+                else:
+                    rft.printErr("No '@odata.id' found in system member: {}".format(member))
+
+            # restore existing rft options
+            rft.allOptn = saved_allOptn
+            rft.Link = saved_Link
+            rft.gotIdOptn = saved_gotIdOptn
+            rft.IdOptnCount = saved_IdOptnCount
+            return rc, r, j, d
+        else:
+            # Issue command to single specified system
+            return run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def patch_single(self,sc,op,rft,cmdTop=False, prop=None, patchData=None, r=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         # verify we have got an argument which is the patch structure
         # its in form '{ "AssetTag": <val>, "IndicatorLed": <val> }'
@@ -307,7 +354,11 @@ class RfSystemsOperations():
         return(rc,r,j,d)
 
 
-    def reset(self,sc,op,rft,cmdTop=False, prop=None):
+    def patch(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.patch_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def reset_single(self,sc,op,rft,cmdTop=False, prop=None):
         # this operation has argument syntaxes below:
         #     ...reset <resetType>
         #   where <resetType> is a subset of Redfish defined redfish resetType values
@@ -363,6 +414,7 @@ class RfSystemsOperations():
         #output the post data in json to send over the network   
         reqPostData=json.dumps(resetData)           
         # send post to rhost.  Use the resetPath as the relative path
+        rft.printVerbose(1, 'Posting reset command to target {}'.format(resetPath))
         rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'POST', r.url, relPath=resetPath,
                                          reqData=reqPostData)
                    
@@ -373,8 +425,11 @@ class RfSystemsOperations():
         else: return(rc,r,False,None)
 
 
-        
-    def setAssetTag(self,sc,op,rft,cmdTop=False, prop=None):
+    def reset(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.reset_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def setAssetTag_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
         propName="AssetTag"
@@ -403,7 +458,11 @@ class RfSystemsOperations():
         else: return(rc,r,False,None)
 
 
-    def setIndicatorLed(self,sc,op,rft,cmdTop=False, prop=None):
+    def setAssetTag(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setAssetTag_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def setIndicatorLed_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
         propName="IndicatorLED"
@@ -425,7 +484,7 @@ class RfSystemsOperations():
         rc,r,j,d=op.get(sc,op,rft)
         if( rc != 0):  return(rc,r,False,None)
         if( not propName in d ):
-            rft.PrintErr("System resource does not have a {} property.".format(propName))
+            rft.printErr("System resource does not have a {} property.".format(propName))
             return(8,r,False,None)
         
         #ststststst   rc,r,j,d=op.patch(sc,op, rft, patchData=patchData, r=r)
@@ -437,7 +496,11 @@ class RfSystemsOperations():
         else: return(rc,r,False,None)
 
 
-    def setBootOverride(self,sc,op,rft,cmdTop=False, prop=None):
+    def setIndicatorLed(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setIndicatorLed_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def setBootOverride_single(self,sc,op,rft,cmdTop=False, prop=None):
         # this operation has argument syntaxes below:
         #     ...setBootOverride <enabledVal> [<targetVal>]
         #       where <targetVal> is not required if enabledVal==Disabled
@@ -530,6 +593,10 @@ class RfSystemsOperations():
             return(rc,r,j,bootd)
         
         else: return(rc,r,False,None)
+
+
+    def setBootOverride(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setBootOverride_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
 
 
     def getProcessors(self,sc,op, rft, cmdTop=False, prop=None):
