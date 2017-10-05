@@ -147,7 +147,8 @@ class RfChassisMain():
         rft.printVerbose(5,"Chassis: operation={}, args={}".format(self.operation,self.args))
                 
         # check if the command requires a collection member target -I|-M|-L|-1|-F eg sysIdoptn
-        nonIdCommands=["collection", "list", "examples", "hello"]
+        nonIdCommands=["collection", "list", "examples", "hello", "patch", "setAssetTag",
+                       "setIndicatorLed", "setPowerLimit"]
         if( ( not self.operation in nonIdCommands ) and (rft.IdOptnCount==0) ):
             rft.printErr("Chassis: Syntax error: [-I|-M|-L|-F|-1] required for action that targets a specific Chassis instance")
             return(0,None,False,None)
@@ -264,8 +265,54 @@ class RfChassisOperations():
             rft.printVerbose(1," list {} Collection member info: Id, URI, AssetTag".format(collName,skip1=True, printV12=cmdTop))
         return(rc,r,j,d)
 
-    
-    def patch(self,sc,op,rft,cmdTop=False, prop=None, patchData=None, r=None):
+
+    def iterate_op(self, run_single, sc, op, rft, cmdTop=False, prop=None):
+        # Wrapper method to handle issuing commands to a single chassis or to all chassis in the collection
+        if rft.allOptn:
+            # Issue command to all chassis in collection
+
+            # get the list of chassis
+            rc, r, j, d = op.clist(sc, op, rft, cmdTop=cmdTop, prop=prop)
+            if rc != 0 or not j or d is None or not isinstance(d, dict) or 'Members' not in d:
+                rft.printErr("Unable to get list of Chassis; return code = {}, list data = {}".format(rc, d))
+                return rc, r, j, d
+
+            # save existing rft options
+            saved_allOptn = rft.allOptn
+            saved_Link = rft.Link
+            saved_gotIdOptn = rft.gotIdOptn
+            saved_IdOptnCount = rft.IdOptnCount
+
+            # set rft options to process a single item
+            rft.allOptn = False
+            rft.gotIdOptn = True
+            rft.IdOptnCount = 1
+
+            # iterate through chassis and run operation on each based on the link (@odata.id value)
+            members = d.get('Members')
+            rc, r, j, d = 8, None, False, None
+            for member in members:
+                if '@odata.id' in member:
+                    link = member.get('@odata.id')
+                    # set rft.Link to point to the target chassis
+                    rft.Link = link
+                    # perform the operation
+                    rc, r, j, d = run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+                else:
+                    rft.printErr("No '@odata.id' found in chassis member: {}".format(member))
+
+            # restore existing rft options
+            rft.allOptn = saved_allOptn
+            rft.Link = saved_Link
+            rft.gotIdOptn = saved_gotIdOptn
+            rft.IdOptnCount = saved_IdOptnCount
+            return rc, r, j, d
+        else:
+            # Issue command to single specified chassis
+            return run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def patch_single(self,sc,op,rft,cmdTop=False, prop=None, patchData=None, r=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         # verify we have got an argument which is the patch structure
         # its in form '{ "AssetTag": <val>, "IndicatorLed": <val> }'
@@ -299,8 +346,11 @@ class RfChassisOperations():
         return(rc,r,j,d)
 
 
-        
-    def setAssetTag(self,sc,op,rft,cmdTop=False, prop=None):
+    def patch(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.patch_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def setAssetTag_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
         propName="AssetTag"
@@ -329,7 +379,11 @@ class RfChassisOperations():
         else: return(rc,r,False,None)
 
 
-    def setIndicatorLed(self,sc,op,rft,cmdTop=False, prop=None):
+    def setAssetTag(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setAssetTag_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
+    def setIndicatorLed_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
         propName="IndicatorLED"
@@ -351,9 +405,9 @@ class RfChassisOperations():
         rc,r,j,d=op.get(sc,op,rft)
         if( rc != 0):  return(rc,r,False,None)
         if( not propName in d ):
-            rft.PrintErr("System resource does not have a {} property.".format(propName))
+            rft.printErr("System resource does not have a {} property.".format(propName))
             return(8,r,False,None)
-        
+
         rc,r,j,d=rft.patchResource(rft, r, patchData)
         if(rc==0):
             rft.printVerbose(1," Chassis setIndicatorLed:",skip1=True, printV12=cmdTop)
@@ -361,6 +415,9 @@ class RfChassisOperations():
             return(rc,r,j,ledState)
         else: return(rc,r,False,None)
 
+
+    def setIndicatorLed(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setIndicatorLed_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
 
 
     def getPower(self,sc,op, rft, cmdTop=False, prop=None):
@@ -478,7 +535,7 @@ class RfChassisOperations():
 
 
     #setPowerLimit [-i<indx>] <limit> [<exception> [<correctionTime>]] -- set powerLimit control properties")
-    def setPowerLimit(self,sc,op,rft,cmdTop=False, prop=None):
+    def setPowerLimit_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
                          
         if cmdTop is True:  prop=rft.prop
@@ -599,6 +656,8 @@ class RfChassisOperations():
         else: return(rc,r,False,None)
 
 
+    def setPowerLimit(self, sc, op, rft, cmdTop=False, prop=None):
+        return op.iterate_op(op.setPowerLimit_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
 
     
     def getLogService(self,sc,op,rft,cmdTop=False, prop=None):

@@ -273,7 +273,53 @@ class RfSystemsOperations():
             rft.printVerbose(1," list {} Collection member info: Id, URI, AssetTag".format(collName,skip1=True, printV12=cmdTop))
         return(rc,r,j,d)
 
-    
+
+    def iterate_op(self, run_single, sc, op, rft, cmdTop=False, prop=None):
+        # Wrapper method to handle issuing commands to a single system or to all systems in the collection
+        if rft.allOptn:
+            # Issue command to all systems in collection
+
+            # get the list of systems
+            rc, r, j, d = op.list(sc, op, rft, cmdTop=cmdTop, prop=prop)
+            if rc != 0 or not j or d is None or not isinstance(d, dict) or 'Members' not in d:
+                rft.printErr("Unable to get list of Systems; return code = {}, list data = {}".format(rc, d))
+                return rc, r, j, d
+
+            # save existing rft options
+            saved_allOptn = rft.allOptn
+            saved_Link = rft.Link
+            saved_gotIdOptn = rft.gotIdOptn
+            saved_IdOptnCount = rft.IdOptnCount
+
+            # set rft options to process a single item
+            rft.allOptn = False
+            rft.gotIdOptn = True
+            rft.IdOptnCount = 1
+
+            # iterate through systems and run operation on each based on the link (@odata.id value)
+            members = d.get('Members')
+            rc, r, j, d = 8, None, False, None
+            for member in members:
+                if '@odata.id' in member:
+                    link = member.get('@odata.id')
+                    # set rft.Link to point to the target system
+                    rft.Link = link
+                    # perform the operation
+                    rc, r, j, d = run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+                else:
+                    rft.printErr("No '@odata.id' found in system member: {}".format(member))
+
+            # restore existing rft options
+            rft.allOptn = saved_allOptn
+            rft.Link = saved_Link
+            rft.gotIdOptn = saved_gotIdOptn
+            rft.IdOptnCount = saved_IdOptnCount
+            return rc, r, j, d
+        else:
+            # Issue command to single specified system
+            return run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
+
+
     def patch_single(self,sc,op,rft,cmdTop=False, prop=None, patchData=None, r=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         # verify we have got an argument which is the patch structure
@@ -383,47 +429,6 @@ class RfSystemsOperations():
         return op.iterate_op(op.reset_single, sc, op, rft, cmdTop=cmdTop, prop=prop)
 
 
-    def iterate_op(self, run_single, sc, op, rft, cmdTop=False, prop=None):
-        # Wrapper method to handle issuing commands to single system or to all systems in collection
-        if rft.allOptn:
-            # Issue command to all systems in collection
-            # get the list of systems
-            rc, r, j, d = op.list(sc, op, rft, cmdTop=cmdTop, prop=prop)
-            if rc != 0 or not j or d is None or not isinstance(d, dict) or 'Members' not in d:
-                rft.printErr("Unable to get list of Systems; return code = {}, list data = {}".format(rc, d))
-                return rc, r, j, d
-            members = d.get('Members')
-            # save existing rft options
-            saved_allOptn = rft.allOptn
-            saved_Link = rft.Link
-            saved_gotIdOptn = rft.gotIdOptn
-            saved_IdOptnCount = rft.IdOptnCount
-            # set rft options to process a single item
-            rft.allOptn = False
-            rft.gotIdOptn = True
-            rft.IdOptnCount = 1
-            rc, r, j, d = 8, None, False, None
-            # iterate through systems and run operation on each based on the link (@odata.id value)
-            for member in members:
-                if '@odata.id' in member:
-                    link = member.get('@odata.id')
-                    # set rft.Link to point to the target system
-                    rft.Link = link
-                    # perform the operation
-                    rc, r, j, d = run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
-                else:
-                    rft.printErr("No '@odata.id' found in system member: {}".format(member))
-            # restore existing rft options
-            rft.allOptn = saved_allOptn
-            rft.Link = saved_Link
-            rft.gotIdOptn = saved_gotIdOptn
-            rft.IdOptnCount = saved_IdOptnCount
-            return rc, r, j, d
-        else:
-            # Issue command to single specified system
-            return run_single(sc, op, rft, cmdTop=cmdTop, prop=prop)
-
-
     def setAssetTag_single(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
@@ -479,7 +484,7 @@ class RfSystemsOperations():
         rc,r,j,d=op.get(sc,op,rft)
         if( rc != 0):  return(rc,r,False,None)
         if( not propName in d ):
-            rft.PrintErr("System resource does not have a {} property.".format(propName))
+            rft.printErr("System resource does not have a {} property.".format(propName))
             return(8,r,False,None)
         
         #ststststst   rc,r,j,d=op.patch(sc,op, rft, patchData=patchData, r=r)
