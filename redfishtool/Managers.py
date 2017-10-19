@@ -66,7 +66,8 @@ class RfManagersMain():
         print("     reset <resetType>         -- reset a Manager.  <resetType>= On,  GracefulShutdown, GracefulRestart, ")
         print("                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerPutton")
         print("     setDateTime <dateTimeString>--set the date and time")
-        print("     setTimeOffset <offsetSTring>--set the time offset w/o changing time setting")
+        print("     setTimeOffset offset=<offsetString>  --set the time offset w/o changing time setting")
+        print("                                            <offsetString> is of form \"[+/-]mm:ss\". Ex: \"-10:01\" ")
         print("     NetworkProtocol           -- get the \"NetworkProtocol\" resource under the specified manager.")
         print("     setIpAddress [-i<indx>]... -- set the Manager IP address -NOT IMPLEMENTED YET")
         print("")
@@ -418,10 +419,10 @@ class RfManagersOperations():
             rft.printErr("   where <timeOffsetString> in form: \"[+/-]hh:ss\",  ex:  -06:00 ")
             return(8,None,False,None)
         else: #we have an arg[1]
-            datePattern="^([-+][0-1][0-9]:[0-5][0-9])$"   #  [+/-]hh:ss
+            datePattern="^offset=([-+][0-1][0-9]:[0-5][0-9])$"   #  [+/-]hh:ss
             dateMatch=re.search(datePattern,sc.args[1])  # sc.args[1]=<timeOffset>
             if( dateMatch ):
-                timeOffsetString=(sc.args[1])  # keep it a string
+                timeOffsetString=dateMatch.group(1) # keep it a string. <timeOffsetString>
                 rft.printVerbose(4,"setDateTime: timeOffset={}".format(timeOffsetString))
             else:
                 rft.printErr("Error:   setTimeOffset: invalid <timeOffset> value specified: {}".format(sc.args[1]))
