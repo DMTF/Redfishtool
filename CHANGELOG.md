@@ -1,6 +1,9 @@
 # Change Log
-## [1.0.2] - 2017-10-5
+
+## [1.0.2] - 2017-10-27
+- added support for leveraging the `@Redfish.ActionInfo` annotation if `@Redfish.AllowableValues` for Reset actions
 - added support for `--all` option to Systems and Chassis commands that perform update operations
+- fixed handling of the `setTimeOffset` argument
 
 ## [1.0.1] - 2017-6-15
 - created a script called `redfishtool` to be installed via `pip install redfishtool`
