@@ -1,4 +1,4 @@
-# Copyright Notice:
+# Copyrighfalset Notice:
 # Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/LICENSE.md
 
@@ -315,7 +315,7 @@ class RfRawOperations():
         try:
             putData=json.loads(rft.requestData)
         except ValueError:
-            rft.printErr("Post: invalid Json input data:{}".format(rft.requestData))
+            rft.printErr("Put: invalid Json input data:{}".format(rft.requestData))
             return(5,None,False,None)
         ##print("postData: {}".format(postData))
 
