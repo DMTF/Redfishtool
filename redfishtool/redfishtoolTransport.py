@@ -103,6 +103,7 @@ class RfTransport():
         self.gotMatchOptn=False
         self.matchProp=None
         self.matchValue=None
+        self.gotEntriesOptn = False
         
         self.IdLevel2=None
         self.gotIdLevel2Optn=False

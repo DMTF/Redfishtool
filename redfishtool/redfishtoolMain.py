@@ -54,6 +54,7 @@ def displayOptions(rft):
         print("   -T <timeout>,--Timeout=<timeout> -- timeout in seconds for each http request.  Default=10")
         print("")
         print("   -P <property>, --Prop=<property> -- return only the specified property. Applies only to all \"get\" operations")
+        print("   -E, --Entries                    -- Fetch the Logs entries. Applies to Logs sub-command of Systems, Chassis and Managers")
         print("")
         print("  Options used by \"raw\" subcommand:")
         print("   -d <data>    --data=<data>       -- the http request \"data\" to send on PATCH,POST,or PUT requests")
@@ -120,10 +121,10 @@ def main(argv):
     rft=RfTransport()
 
     try:
-        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:I:M:F1L:i:m:l:aW:A:S:R:H:D:C",
+        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:EI:M:F1L:i:m:l:aW:A:S:R:H:D:C",
                         ["Version", "help", "verbose", "status", "quiet", 
                          "user=", "password=", "rhost=", "token=", "config=", "Timeout=",
-                         "Prop=", "data=", "Id=", "Match=", "First", "One", "Link=",
+                         "Prop=", "data=", "Entries", "Id=", "Match=", "First", "One", "Link=",
                          "id=", "match=", "link", "all",
                          "Wait=", "Auth=","Secure=", "RedfishVersion=", "Headers=", "Debug=",
                          "CheckRedfishVersion"  ])
@@ -171,6 +172,9 @@ def main(argv):
         # options used by raw subcommand to specify http method (-X, --request) and request data (-d, --data)
         elif opt in ("-d", "--data"):
             rft.requestData=arg
+        # options related to the Logs sub-command of Systems, Chassis and Managers
+        elif opt in ("-E", "--Entries"):
+            rft.gotEntriesOptn = True
         # options to find the Id or member of a collection in a subcommand
         elif opt in ("-I", "--Id"):
             rft.Id=arg
@@ -340,8 +344,8 @@ def main(argv):
                                                         rft.protocolVer, rft.auth, rft.timeout))
     rft.printVerbose(5,"Main: prop={}, Id={}, Match={}:{}, First={}, -1={}, Link={}".format( rft.prop,
                         rft.Id, rft.matchProp,rft.matchValue, rft.firstOptn, rft.oneOptn, rft.Link))
-    rft.printVerbose(5,"Main: gotIdOptn={}, IdOptnCount={}, gotPropOptn={}, gotMatchOptn={}".format(
-                            rft.gotIdOptn, rft.IdOptnCount, rft.gotPropOptn, rft.gotMatchOptn))
+    rft.printVerbose(5,"Main: gotIdOptn={}, IdOptnCount={}, gotPropOptn={}, gotMatchOptn={}, gotEntriesOptn={}".format(
+                            rft.gotIdOptn, rft.IdOptnCount, rft.gotPropOptn, rft.gotMatchOptn, rft.gotEntriesOptn))
     rft.printVerbose(5,"Main: 2nd-Level Collection Member reference options: -i<id>={}, -m<match>={}:{}, -l<link>={} -all={}".format(
                             rft.IdLevel2, rft.matchLevel2Prop, rft.matchLevel2Value, rft.linkLevel2, rft.allOptn))
     rft.printVerbose(5,"Main: 2nd-level Collection Member parsing: gotIdLevel2Optn={}, gotMatchLevel2Optn={}, IdLevel2OptnCount={}".format(

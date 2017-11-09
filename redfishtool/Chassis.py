@@ -714,6 +714,25 @@ class RfChassisOperations():
                 if(rc==0):
                     rft.printVerbose(1," {} Collection Member ".format(collName,skip1=True, printV12=cmdTop))
 
+            # If '--Entries' specified, get "Entries" nav link and read it
+            if rc == 0 and rft.gotEntriesOptn:
+                if r is not None and j and isinstance(d, dict):
+                    rft.printVerbose(1, 'getLogService: attempting to get Entries for Logs')
+                    entries = d.get('Entries')
+                    if entries is not None and isinstance(entries, dict):
+                        entries_uri = entries.get('@odata.id')
+                        if entries_uri is not None:
+                            rc, r, j, d = rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url,
+                                                                 relPath=entries_uri, prop=prop)
+                        else:
+                            rft.printErr('getLogService: @odata.id not found in "Entries" property')
+                    else:
+                        rft.printErr('getLogService: "Entries" property not found in JSON payload')
+                else:
+                    rft.printErr(
+                        'Unable to fetch Entries property from previous response: response = {}, is_json = {}, type(json) = {}'
+                        .format(r, j, type(d)))
+
         # else, client specified the -a option requesting ALL of the LogServices members
         # for logs, we will not support this.  Its too much data.
         else:
