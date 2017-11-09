@@ -61,6 +61,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
        -c <cfgFile>,--config=<cfgFile>  -- read options (including credentials) from file <cfgFile>
        -T <timeout>,--Timeout=<timeout> -- timeout in seconds for each http request.  Default=10
        -P <property>, --Prop=<property> -- return only the specified property. Applies only to all "get" operations
+       -E, --Entries                    -- Fetch the Logs entries. Applies to Logs sub-command of Systems, Chassis and Managers
        -v,  --verbose                   -- verbose level, can repeat up to 5 times for more verbose output
                                            -v(header), -vv(+addl info), -vvv(Request trace), -vvvv(+subCmd dbg), 
                                            -vvvvv(max dbg)
@@ -139,18 +140,19 @@ While other generic http clients such as Linux curl can send and receive Redfish
       setAssetTag <assetTag>    -- set the system's asset tag
       setIndicatorLed  <state>  -- set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
       setBootOverride <enabledVal> <targetVal> -- set Boot Override properties. <enabledVal>=Disabled|Once|Continuous
-                               -- <targetVal> =None|Pxe|Floppy|Cd|Usb|Hdd|BiosSetup|Utilities|Diags|UefiTarget|
+                                -- <targetVal> =None|Pxe|Floppy|Cd|Usb|Hdd|BiosSetup|Utilities|Diags|UefiTarget|
       Processors [list]         -- get the "Processors" collection, or list "id" and URI of members.
-       Processors [IDOPTN]        --  get the  member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+       Processors [IDOPTN]      -- get the  member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
 
       EthernetInterfaces [list] -- get the "EthernetInterfaces" collection, or list "id" and URI of members.
-       EthernetInterfaces [IDOPTN]--  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+       EthernetInterfaces [IDOPTN] -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
 
       SimpleStorage [list]      -- get the ComputerSystem "SimpleStorage" collection, or list "id" and URI of members.
-       SimpleStorage [IDOPTN]     --  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+       SimpleStorage [IDOPTN]   -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
 
       Logs [list]               -- get the ComputerSystem "LogServices" collection , or list "id" and URI of members.
-       Logs [IDOPTN]              --  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+       Logs [IDOPTN]            -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+       Logs -E [IDOPTN]         -- get the log entries specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
       clearLog   <id>           -- clears the log defined by <id>
       examples                  -- example commands with syntax
       hello                     -- Systems hello -- debug command
@@ -176,7 +178,8 @@ While other generic http clients such as Linux curl can send and receive Redfish
                      <limit>=null disables power limiting. <indx> is the powerControl array indx (dflt=0)
     
         Logs [list]                   -- get the Chassis "LogServices" collection , or list "id" and URI of members.
-          Logs [IDOPTN]                -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+          Logs [IDOPTN]               -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+          Logs -E [IDOPTN]            -- get the log entries specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
         clearLog   <id>               -- clears the log defined by <id>
         examples                      -- example commands with syntax
         hello                         -- Chassis hello -- debug command
@@ -192,19 +195,20 @@ While other generic http clients such as Linux curl can send and receive Redfish
      patch {A: B,C: D,...}        -- patch the json-formated {prop: value...} data to the object
      reset <resetType>            -- reset a Manager.  <resetType>= On,  GracefulShutdown, GracefulRestart,
                                       ForceRestart, ForceOff, ForceOn, Nmi, PushPowerPutton
-     setDateTime <dateTimeString> --set the date and time
-     setTimeOffset <offsetSTring> --set the time offset w/o changing time setting
+     setDateTime <dateTimeString> -- set the date and time
+     setTimeOffset <offsetSTring> -- set the time offset w/o changing time setting
      NetworkProtocol              -- get the "NetworkProtocol" resource under the specified manager.
      setIpAddress [-i<indx>]...   -- set the Manager IP address -NOT IMPLEMENTED YET
 
      EthernetInterfaces [list]    -- get the managers "EthernetInterfaces" collection, or list "id",URI, Name of members
-      EthernetInterfaces [IDOPTN]   --  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -a #all
+      EthernetInterfaces [IDOPTN] -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -a #all
 
      SerialInterfaces [list]      -- get the managers "SerialInterfaces" collection, or list "id",URI, Name of members.
-      SerialInterfaces [IDOPTN]     --  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+      SerialInterfaces [IDOPTN]   -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
 
      Logs [list]                  -- get the Managers "LogServices" collection , or list "id",URI, Name of members.
-      Logs [IDOPTN]                 --  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+      Logs [IDOPTN]               -- get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+      Logs -E [IDOPTN]            -- get the log entries specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
      clearLog   <id>              -- clears the log defined by <id>
      examples                     -- example commands with syntax
      hello                        -- Systems hello -- debug command
@@ -348,6 +352,12 @@ While other generic http clients such as Linux curl can send and receive Redfish
      # Gets processor with property Socket=CPU_1, on system at url <sysUrl>
      redfishtool -r <ip> -u <username> -p <password> Systems -L <sysUrl> Processors -m Socket:CPU_1
 
+     # Gets log member with Id=SEL from the first System
+     redfishtool -r <ip> -u <username> -p <password> Systems -1 Logs -i SEL
+
+     # Gets log entries with Id=SEL from the first System
+     redfishtool -r <ip> -u <username> -p <password> Systems -1 Logs -E -i SEL
+
 ### Chassis subcommand Examples
 
     $ python redfishtool.py -r <ip> -u <username> -p <password> Chassis examples
@@ -405,6 +415,12 @@ While other generic http clients such as Linux curl can send and receive Redfish
      # Sets the power limit on all chassis
      redfishtool -r <ip> -u <username> -p <password> Chassis --all setPowerLimit [-i<indx>] <limit> [<exception> [<correctionTime>]]
 
+     # Gets log member with Id=SEL from the first Chassis
+     redfishtool -r <ip> -u <username> -p <password> Chassis -1 Logs -i SEL
+
+     # Gets log entries with Id=SEL from the first Chassis
+     redfishtool -r <ip> -u <username> -p <password> Chassis -1 Logs -E -i SEL
+
 ### Managers subcommand Examples
 
     $ python redfishtool.py -r <ip> -u <username> -p <password> Managers examples
@@ -445,7 +461,13 @@ While other generic http clients such as Linux curl can send and receive Redfish
      redfishtool -r <ip> -u <username> -p <password> Managers -I <Id> EthernetInterfaces -i 1
 
      # Gets the NIC with MAC AA:BB:CC:DD:EE:FF for manager at url <Url>
-     redfishtool -r <ip> -u <username> -p <password> Managers -L <Url> EthernetInterfaces -m MACAddress:AA:BB:CC:DD:EE:FF 
+     redfishtool -r <ip> -u <username> -p <password> Managers -L <Url> EthernetInterfaces -m MACAddress:AA:BB:CC:DD:EE:FF
+
+     # Gets log member with Id=SEL from the first Manager
+     redfishtool -r <ip> -u <username> -p <password> Managers -1 Logs -i SEL
+
+     # Gets log entries with Id=SEL from the first Manager
+     redfishtool -r <ip> -u <username> -p <password> Managers -1 Logs -E -i SEL
 
 ### AccountService subcommand Examples
 
