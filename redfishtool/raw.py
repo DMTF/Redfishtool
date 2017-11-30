@@ -92,7 +92,7 @@ class RfRawMain():
             "POST":                 op.httpPost,
             "DELETE":               op.httpDelete,
             "HEAD":                 op.httpHead,
-            #"PUT":                  op.httpPut,
+            "PUT":                  op.httpPut,
             "hello":                op.hello,
             "examples":             op.examples
         }
@@ -307,6 +307,41 @@ class RfRawOperations():
         return(rc,r,j,d)
 
 
+    def httpPut(self,sc,op,rft,cmdTop=False, prop=None):
+        rft.printVerbose(4,"{}:{}: in raw".format(rft.subcommand,sc.operation))
+
+        # load put data--verify its good json
+        #  get the postData from rft.requestData  readin on commandline via: -d <patchData>
+        try:
+            putData=json.loads(rft.requestData)
+        except ValueError:
+            rft.printErr("Put: invalid Json input data:{}".format(rft.requestData))
+            return(5,None,False,None)
+        ##print("postData: {}".format(postData))
+
+        # we verified that we had two args in RawMain(), so we can just read the <uri> arg here
+        path=sc.args[1]
+        method="PUT"
+        rft.printVerbose(4,"raw: POST: method:{} path:{}".format(method,path))
+
+        apiType=self.getApiType(rft,path)   # UNAUTHENTICATED API or Authenticated API
+
+        # calculate rootUrl--with correct scheme, root path, and rhost IP (w/o querying rhost)
+        scheme=rft.getApiScheme(apiType)
+        scheme_tuple=[scheme, rft.rhost, "/redfish", "","",""]
+        rootUrl=urlunparse(scheme_tuple)  # so rootUrl="http[s]://<rhost>[:<port>]/redfish"
+
+        #output the post data in json to send over the network   
+        reqPutData=json.dumps(putData)
+        #Put the data
+        rc,r,j,d=rft.rftSendRecvRequest(apiType, method, rootUrl, relPath=path, reqData=reqPutData)
+        if(rc!=0):
+            rft.printErr("raw: Error sending PUT to resource, aborting")
+            return(rc,r,False,None)
+
+
+        if(rc==0):   rft.printVerbose(1," raw PUT:",skip1=True, printV12=cmdTop)
+        return(rc,r,j,d)
 
 
     def httpDelete(self,sc,op,rft,cmdTop=False, prop=None):
