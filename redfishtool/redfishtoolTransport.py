@@ -692,9 +692,9 @@ class RfTransport():
             rft.printVerbose(4,"Transport: delete session: id:{},  link:{}".format(rft.sessionId, rft.sessionLink))
             sessionLink=rft.sessionLink
             
-        # now we have a login uri,  login
-        # POST the user credentials to the login URI, and read the SessionLink and SessionAuthToken from header
-        rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'DELETE', rft.rootUri, relPath=sessionLink)
+        # now we have a session uri,  logout
+        # DELETE the session URI
+        rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'DELETE', rft.rootUri, relPath=sessionLink, jsonData=False)
         if(rc!=0):
             rft.printErr("Error: Logout: Session Delete Failed: Delete to Sessions collection failed")
             rft.printErr("  sessionId:{}".format(sessionLink))
