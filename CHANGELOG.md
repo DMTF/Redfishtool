@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.3] - 2018-1-2
+- added support for PUT with raw commands
+- added support for getting log entries via the -E argument
+
 ## [1.0.2] - 2017-10-27
 - added support for leveraging the `@Redfish.ActionInfo` annotation if `@Redfish.AllowableValues` for Reset actions
 - added support for `--all` option to Systems and Chassis commands that perform update operations
