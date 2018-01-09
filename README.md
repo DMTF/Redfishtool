@@ -136,7 +136,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
       list                      -- list information about the Systems collection members("Id", URI, and AssetTag)
       patch {A: B,C: D,...}     -- patch the json-formated {prop: value...} data to the object
       reset <resetType>         -- reset a system.  <resetType>= On,  GracefulShutdown, GracefulRestart,
-                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerPutton
+                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton
       setAssetTag <assetTag>    -- set the system's asset tag
       setIndicatorLed  <state>  -- set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
       setBootOverride <enabledVal> <targetVal> -- set Boot Override properties. <enabledVal>=Disabled|Once|Continuous
@@ -194,7 +194,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
      list                         -- list information about the Managers collection members("Id", URI, and UUID)
      patch {A: B,C: D,...}        -- patch the json-formated {prop: value...} data to the object
      reset <resetType>            -- reset a Manager.  <resetType>= On,  GracefulShutdown, GracefulRestart,
-                                      ForceRestart, ForceOff, ForceOn, Nmi, PushPowerPutton
+                                      ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton
      setDateTime <dateTimeString> -- set the date and time
      setTimeOffset <offsetSTring> -- set the time offset w/o changing time setting
      NetworkProtocol              -- get the "NetworkProtocol" resource under the specified manager.
