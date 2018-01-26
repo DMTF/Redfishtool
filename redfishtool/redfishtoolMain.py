@@ -182,13 +182,12 @@ def main(argv):
             rft.IdOptnCount+=1
         elif opt in ("-M", "--Match"):  
             # arg is of the form: "<prop>:<value>"
-            matchProp_Pattern="^(.+):(.+)$"
-            matchProp_Match=re.search(matchProp_Pattern,arg)
-            if( matchProp_Match ):
-                rft.matchProp=matchProp_Match.group(1)
-                rft.matchValue=matchProp_Match.group(2)
-                rft.IdOptnCount+=1
-                rft.gotMatchOptn=True
+            pair = arg.split(':', 1)
+            if len(pair) == 2:
+                rft.matchProp = pair[0]
+                rft.matchValue = pair[1]
+                rft.IdOptnCount += 1
+                rft.gotMatchOptn = True
             else:
                 rft.printErr("Invalid --Match= option format: {}".format(arg))
                 rft.printErr("     Expect --Match=<prop>:<value> Ex -M AssetTag:5555, -Match=AssetTag:5555",noprog=True)
@@ -209,13 +208,12 @@ def main(argv):
             rft.IdLevel2OptnCount+=1
         elif opt in ("-m", "--match"):
             # arg is of the form: "<prop>:<value>"
-            matchProp_Pattern="^(.+):(.+)$"
-            matchProp_Match=re.search(matchProp_Pattern,arg)
-            if( matchProp_Match ):
-                rft.matchLevel2Prop=matchProp_Match.group(1)
-                rft.matchLevel2Value=matchProp_Match.group(2)
-                rft.IdLevel2OptnCount+=1
-                rft.gotMatchLevel2Optn=True
+            pair = arg.split(':', 1)
+            if len(pair) == 2:
+                rft.matchLevel2Prop = pair[0]
+                rft.matchLevel2Value = pair[1]
+                rft.IdLevel2OptnCount += 1
+                rft.gotMatchLevel2Optn = True
             else:
                 rft.printErr("Invalid level2 --match= option format: {}".format(arg))
                 rft.printErr("     Expect --match=<prop>:<value> Ex -m ProcessorType:CPU, -match=ProcessorType:CPU",noprog=True)
