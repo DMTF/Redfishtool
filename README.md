@@ -1,4 +1,5 @@
-Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+Copyright 2016-2018 Distributed Management Task Force, Inc. All rights reserved.
+
 # redfishtool  
 
 ## About
@@ -29,14 +30,11 @@ While other generic http clients such as Linux curl can send and receive Redfish
 
 ## Why redfishtool?
 
-
 1. ***redfishtool*** was originally written during the development of the Redfish specification to help find ambiguities in the spec.  
 1. ***redfishtool*** is now also being used to test inter-operability between redfish service implementations.
 1. In addition, ***redfishtool*** provides an example implementation for how a client can execute common server management functions like inventory; power-on/off/reset; setting power limits, indicator LEDs, and AssetTags, and searching a multi-node redfish service to find a specific node (with specific UUID, redfish Id, etc).  redfishtool follows strict rules of interoperability.  To support this goal, liberal comments are added throughout code to explain why each step is being executed.
 1. As described above, it makes it easy to use the Redfish API from a BASH script, or as an easy-to-use interactive CLI -- but WITHOUIT creating a 'new API'.   All (rather most) of the responses from ***redfishtool*** are Redfish-defined responses.  The properties and resources are defined in the redfish spec.   ***redfishtool*** is just a tool to access the Redfish API-not a new interface itself.
      * The execption is that a 'list' operation was added for all collections to display the key properties for each of the members--rather than just the URIs to the members.
- 
-
 
 ## Usage
 
@@ -49,8 +47,8 @@ While other generic http clients such as Linux curl can send and receive Redfish
  * ***Operations*** are specify an action or operation you want to perform like S`ystems setBootOverride` ..., or `Systems reset`.
  * ***OtherArgs*** are any other arguments after the Operation that are sometimes required--like:  `Systems <setBootOverride> <enableValue>` <targetValue>"
 
-
 ### Common OPTIONS:
+
        -V,  --version                   -- show redfishtool version, and exit
        -h,  --help                      -- show Usage, Options, and list of subCommands, and exit
        -u <user>,   --user=<usernm>     -- username used for remote redfish authentication
@@ -72,10 +70,13 @@ While other generic http clients such as Linux curl can send and receive Redfish
                                           -sss(+requestHdrs,data,authType, +respStatus_code, +elapsed exec time, 
                                                AuthToken/sessId/sessUri)
                                           -ssss(+response headers for debug), -sssss(+response data for debug)
+
 ###### Options used by "raw" subcommand:
+
        -d <data>   --data=<data>        -- the http request "data" to send on PATCH,POST,or PUT requests
 
 ###### Options to specify top-level collection members: eg: `Systems - I <sysId>`
+
        -I <Id>, --Id=<Id>         -- Use <Id> to specify the collection member
        -M <prop>:<val> --Match=<prop>:<val> -- Use <prop>=<val> search to find the collection member
        -F,  --First               -- Use the 1st link returned in the collection or 1st "matching" link if used with -M
@@ -83,7 +84,9 @@ While other generic http clients such as Linux curl can send and receive Redfish
        -a,  --all                 -- Returns all members if the operation is a Get on a top-level collection like Systems
        -L <Link>,  --Link=<Link>  -- Use <Link> (eg /redfish/v1/Systems/1) to reference the collection member.
                                   --   If <Link> is not one of the links in the collection, and error is returned.
+
 ###### Options to specify 2nd-level collection members: eg: `Systems -I<sysId> Processors -i<procId>`
+
        -i <id>, --id=<id>         -- use <id> to specify the 2nd-level collection member
        -m <prop>:<val> --match=<prop>:val> -- use <prop>=<val> search of 2nd-level collection to specify member
        -l <link>  --link=<link>   -- Use <link> (eg /redfish/v1/SYstems/1/Processors/1) to reference a 2nd level resource
@@ -93,6 +96,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
                                   --  -I|M|F|1|L still specifies the top-lvl collection.
 
 ###### Additional OPTIONS:
+
        -W <num>:<connTimeout>,           -- Send up to <num> {GET /redfish} requests with <connTimeout> TCP connection
            --Wait=<num>:<ConnTimeout>    --   timeouts before sending subcommand to rhost.  Default is -W 1:3
        -A <Authn>,   --Auth <Authn>      -- Authentication type to use:  Authn={None|Basic|Session}  Default is Basic
@@ -105,8 +109,9 @@ While other generic http clients such as Linux curl can send and receive Redfish
                                             was specified by the user.
        -H <hdrs>, --Headers=<hdrs>       -- Specify the request header list--overrides defaults. Format "{ A:B, C:D...}
        -D <flag>,  --Debug=<flag>        -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format
-    
+
 ### Subcommands:
+
      about                    -- display version and other information about this version of redfishtool
      versions                 -- get redfishProtocol versions supported by rhost: GET ^/redfish
      root   |  serviceRoot    -- get serviceRoot resouce: GET ^/redfish/v1/
@@ -119,14 +124,15 @@ While other generic http clients such as Linux curl can send and receive Redfish
      metadata                 -- get the CSDL metadata document: GET ^/redfish/v1/$metadata
      raw                      -- execute raw redfish http methods and URIs (-C option will be ignored)
      hello                    -- redfishtool hello world subcommand for dev testing
+
    For Subcommand usage, including subcommand Operations and OtherArgs, execute:
    
      python redfishtool <SubCommand> -h  -- prints usage and options for the specific subCommand
 
-
 ### Subcommand Operations and Addl Args
 
 ###### Systems Operations
+
     python redfishtool.py -r <rhost> -u <username> -p <password> Systems -h
     Usage:
      redfishtool [OPTNS]  Systems  <operation> [<args>]  -- perform <operation> on the system specified 
@@ -158,6 +164,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
       hello                     -- Systems hello -- debug command
 
 ###### Chassis Operations
+
      python redfishtool.py -r <rhost> -u <username> -p <password> Chassis -h
      Usage:
         redfishtool [OPTNS]  Chassis  <operation> [<args>]  -- perform <operation> on the Chassis specified
@@ -185,6 +192,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
         hello                         -- Chassis hello -- debug command
     
 ###### Managers Operations
+
     python redfishtool.py -r <rhost> -u <username> -p <password> Managers -h
     Usage:
        redfishtool [OPTNS]  Managers  <operation> [<args>]  -- perform <operation> on the Managers specified
@@ -214,6 +222,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
      hello                        -- Systems hello -- debug command
 
 ###### AccountService Operations
+
     python redfishtool.py -r <rhost> -u <username> -p <password> AccountService -h
     Usage:
        redfishtool [OPTNS]  AccountService  <operation> [<args>]  -- perform <operation> on the AccountService
@@ -233,8 +242,8 @@ While other generic http clients such as Linux curl can send and receive Redfish
        examples                  -- example commands with syntax
        hello                     -- AccountService hello -- debug command
 
-
 ###### SessionService Operations
+
     python redfishtool.py -r <rhost> -u <username> -p <password> SessionService -h
     Usage:
        redfishtool [OPTNS]  SessionService  <operation> [<args>]  -- perform <operation> on the SessionService
@@ -250,8 +259,8 @@ While other generic http clients such as Linux curl can send and receive Redfish
        examples                    -- example commands with syntax
        hello                       -- Systems hello -- debug command
 
-
 ###### raw Operations
+
     python redfishtool.py -r <rhost> -u <username> -p <password> raw -h
     Usage:
        redfishtool [OPTNS] raw <method> <path>
@@ -283,7 +292,7 @@ While other generic http clients such as Linux curl can send and receive Redfish
         
       examples-- example raw commands with syntax
       hello   -- raw hello -- debug command
-    
+
 # Example Usage
 
 ### System subcommand Examples

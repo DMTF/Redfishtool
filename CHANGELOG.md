@@ -1,6 +1,9 @@
 # Change Log
 
-## [1.0.3] - 2018-1-2
+## [1.0.4] - 2018-02-02
+- fixed parsing of match argument when there are colons in the match data
+
+## [1.0.3] - 2018-01-02
 - added support for PUT with raw commands
 - added support for getting log entries via the -E argument
 
@@ -9,13 +12,13 @@
 - added support for `--all` option to Systems and Chassis commands that perform update operations
 - fixed handling of the `setTimeOffset` argument
 
-## [1.0.1] - 2017-6-15
+## [1.0.1] - 2017-06-15
 - created a script called `redfishtool` to be installed via `pip install redfishtool`
 
-## [1.0.0] - 2017-6-1
+## [1.0.0] - 2017-06-01
 - added AccountService setusername operation to modify the UserName property in an existing account
 
-## [0.9.3] - 2017-4-27
+## [0.9.3] - 2017-04-27
 - updated spelling in various usage print statements
 - corrected usage statement for SessionService login and logout subcommands
 - fixed error in collection list subcommand to show the path correctly
