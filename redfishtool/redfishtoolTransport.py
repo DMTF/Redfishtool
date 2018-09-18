@@ -568,10 +568,17 @@ class RfTransport():
                         # this final response to a multi-response request, and it has not nextlink
                         respd["Members"]= respd["Members"] + d["Members"]
                         return(rc,r,jsonData,respd)
+                    if respd is not None and attempt + 1 >= rft.MaxNextLinks:
+                        # return what we have if we've reached MaxNextLinks
+                        return rc, r, jsonData, respd
                 elif( r.status_code!=200):
                     success=False
                     rft.printErr("Transport: processing response status codes")
                     return(5,r,False,None)
+
+        # Should not get here, but log error if we do
+        rft.printErr("Transport: Internal error; reached end of function without returning")
+        return 5, r, False, None
 
 
 
@@ -1134,11 +1141,20 @@ class RfTransport():
         odataTypeMatch = re.compile('^#([a-zA-Z0-9]*)\.([a-zA-Z0-9\._]*)\.([a-zA-Z0-9]*)$')  
         resourceMatch = re.match(odataTypeMatch, resourceOdataType)
         if(resourceMatch is None):
-            rft.printErr("Transport:parseOdataType: Error parsing @odata.type")
-            return(None,None,None)
-        namespace=resourceMatch.group(1)
-        version=resourceMatch.group(2)
-        resourceType=resourceMatch.group(3)
+            # try with no version component
+            odataTypeMatch = re.compile('^#([a-zA-Z0-9]*)\.([a-zA-Z0-9]*)$')
+            resourceMatch = re.match(odataTypeMatch, resourceOdataType)
+            if (resourceMatch is None):
+                rft.printErr("Transport:parseOdataType: Error parsing @odata.type")
+                return(None,None,None)
+            else:
+                namespace = resourceMatch.group(1)
+                version = None
+                resourceType = resourceMatch.group(2)
+        else:
+            namespace=resourceMatch.group(1)
+            version=resourceMatch.group(2)
+            resourceType=resourceMatch.group(3)
     
         return(namespace, version, resourceType)
 
