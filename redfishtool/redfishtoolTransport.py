@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2016 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/blob/master/LICENSE.md
 
 # redfishtool:  redfishtoolTransport.py
@@ -43,7 +43,6 @@ from urllib.parse import urljoin, urlparse, urlunparse
 from requests.auth import HTTPBasicAuth, AuthBase
 from .ServiceRoot import RfServiceRoot
 
-
 class RfSessionAuth(AuthBase):
     def __init__(self,authToken):
         self.authToken=authToken
@@ -58,8 +57,8 @@ class RfTransport():
     def __init__(self):
         # constant parameters-- these dont change and are not updated
         self.program="redfishtool"              # program name (in case we want to change it)
-        self.version="1.0.4"                    # this redfishtool version
-        self.releaseDate="2/2/2018"             # release date for this version of redfishtool
+        self.version="1.0.5"                    # this redfishtool version
+        self.releaseDate="9/21/2018"            # release date for this version of redfishtool
         self.downloadFrom="https://github.com/DMTF/Redfishtool" # where to find redfishtool
         self.magic="12345"                      # used for debug to test for a known parameter in this object
         self.UNAUTHENTICATED_API=1              # unauthenticated API that doesn't send credentials in body data
