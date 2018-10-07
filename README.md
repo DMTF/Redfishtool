@@ -36,6 +36,15 @@ While other generic http clients such as Linux curl can send and receive Redfish
 1. As described above, it makes it easy to use the Redfish API from a BASH script, or as an easy-to-use interactive CLI -- but WITHOUIT creating a 'new API'.   All (rather most) of the responses from ***redfishtool*** are Redfish-defined responses.  The properties and resources are defined in the redfish spec.   ***redfishtool*** is just a tool to access the Redfish API-not a new interface itself.
      * The execption is that a 'list' operation was added for all collections to display the key properties for each of the members--rather than just the URIs to the members.
 
+
+## Installation
+`redfishtool` can be installed via [pip](https://pip.pypa.io/en/stable/).
+
+```
+pip install redfishtool
+```
+
+
 ## Usage
 
 ***python***  ***redfishtool*** [ ***Options*** ] [ ***SubCommands*** ] [ ***Operation*** ] [ ***OtherArgs*** ]
