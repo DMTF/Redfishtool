@@ -44,6 +44,15 @@ You may install the required packages by running:
     pip install -r requirements.txt
 
 
+
+## Installation
+`redfishtool` can be installed via [pip](https://pip.pypa.io/en/stable/).
+
+```
+pip install redfishtool
+```
+
+
 ## Usage
 
 ***python***  ***redfishtool*** [ ***Options*** ] [ ***SubCommands*** ] [ ***Operation*** ] [ ***OtherArgs*** ]
