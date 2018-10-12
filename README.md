@@ -34,23 +34,24 @@ While other generic HTTP clients such as Linux curl can send and receive Redfish
     * The execption is that a 'list' operation was added for all collections to display the key properties for each of the members--rather than just the URIs to the members.
 
 
-## Requirements
-
-***redfishtool*** is based on Python 3 and the client system is required to have the Python framework installed before the tool can be installed and executed on the system. Additionally, the following packages are required to be installed and accessible from the python environment:
-* requests - https://github.com/kennethreitz/requests
-
-You may install the required packages by running:
-
-    pip install -r requirements.txt
-
-
-
 ## Installation
 `redfishtool` can be installed via [pip](https://pip.pypa.io/en/stable/).
 
 ```
 pip install redfishtool
 ```
+
+
+## Requirements
+
+***redfishtool*** is based on Python 3 and the client system is required to have the Python framework installed before the tool can be installed and executed on the system.
+
+If cloning the tool from Github, as opposed to performing the installation via pip, the following packages are required to be installed and accessible from the python environment:
+* requests - https://github.com/kennethreitz/requests
+
+You may install the required packages by running:
+
+    pip install -r requirements.txt
 
 
 ## Usage
