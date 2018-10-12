@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.6] - 2018-10-12
+- Fixed help output for the raw command
+
 ## [1.0.5] - 2018-09-21
 - Fixed bug with nextLink handling
 - Fixed parsing of `@odata.type` properties when they use an unversioned namespace

@@ -6,7 +6,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='redfishtool',
-      version='1.0.5',
+      version='1.0.6',
       description='Redfishtool package and command-line client',
       long_description=long_description,
       long_description_content_type='text/markdown',
