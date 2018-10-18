@@ -532,6 +532,9 @@ class RfTransport():
                 elif( (r.status_code==200) and (method=="HEAD") ):
                     success=True
                     return(rc,r,False,None)
+                elif (r.status_code == 202 and method in ["DELETE", "PATCH", "POST", "PUT"]):
+                    success = True
+                    return (rc, r, False, None)
                 elif((r.status_code==200) or (r.status_code==201) ):  
                     if( jsonData is True):
                         try:
@@ -572,7 +575,8 @@ class RfTransport():
                         return rc, r, jsonData, respd
                 elif( r.status_code!=200):
                     success=False
-                    rft.printErr("Transport: processing response status codes")
+                    rft.printErr("Transport: unexpected response status code {} for method {}"
+                                 .format(r.status_code, method))
                     return(5,r,False,None)
 
         # Should not get here, but log error if we do
