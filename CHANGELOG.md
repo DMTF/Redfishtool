@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.7] - 2018-10-19
+- Made fix to allow for 202 responses on operations
+
 ## [1.0.6] - 2018-10-12
 - Fixed help output for the raw command
 

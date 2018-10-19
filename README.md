@@ -593,3 +593,4 @@ In order for executables to resolve if using Windows, ensure both the "Python" a
 4. Push changes to Github
 5. Create a new release in Github
 6. Push the new tool version to pypi.org
+    * `python setup.py sdist upload -r pypi`
