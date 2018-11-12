@@ -150,8 +150,9 @@ class RfChassisMain():
         nonIdCommands=["collection", "list", "examples", "hello", "patch", "setAssetTag",
                        "setIndicatorLed", "setPowerLimit"]
         if( ( not self.operation in nonIdCommands ) and (rft.IdOptnCount==0) ):
-            rft.printErr("Chassis: Syntax error: [-I|-M|-L|-F|-1] required for action that targets a specific Chassis instance")
-            return(0,None,False,None)
+            # default to --One if no Id option specified
+            rft.oneOptn = True
+            rft.IdOptnCount += 1
             
         # now execute the operation.
         rc,r,j,d = self.runOperation(rft)
