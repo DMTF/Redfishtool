@@ -154,8 +154,7 @@ class RfSystemsMain():
         rft.printVerbose(5,"Systems: operation={}, args={}".format(self.operation,self.args))
                 
         # check if the command requires a collection member target -I|-M|-L|-1|-F eg sysIdoptn
-        nonIdCommands=["collection", "list", "examples", "hello", "reset", "patch", "setAssetTag",
-                       "setIndicatorLed", "setBootOverride"]
+        nonIdCommands = ["collection", "list", "examples", "hello"]
         if( ( not self.operation in nonIdCommands ) and (rft.IdOptnCount==0) ):
             # default to --One if no Id option specified
             rft.oneOptn = True
