@@ -94,7 +94,8 @@ You may install the required packages by running:
     -d <data>    --data=<data>       -- the http request "data" to send on PATCH,POST,or PUT requests
 
 
-###### Options to specify top-level collection members: eg: `Systems - I <sysId>`
+###### Options to specify top-level collection members: eg: `Systems -I <sysId>`
+For `Systems`, `Managers`, and `Chassis` commands that require specifying a top-level collection member, if no option is specified the default is `--One`.
 
     -I <Id>, --Id=<Id>               -- Use <Id> to specify the collection member
     -M <prop>:<val> --Match=<prop>:<val>-- Use <prop>=<val> search to find the collection member
