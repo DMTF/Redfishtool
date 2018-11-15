@@ -883,7 +883,13 @@ class RfTransport():
 
         elif(rft.oneOptn):
             if(numOfLinks > 1):
-                rft.printErr("Error: getPathBy --One option: more than one link in members array")
+                rc, r, j, d = rft.listCollection(rft, r, coll, prop=None)
+                id_list = []
+                if not rc and 'Members' in d:
+                    id_list = [m['Id'] for m in d['Members'] if 'Id' in m]
+                rft.printErr("Error: No target specified, but multiple {} IDs found: {}"
+                             .format(rft.subcommand, repr(id_list)))
+                rft.printErr("Re-issue command with '-I <Id>' to select target.")
                 return(None,1,None,False,None)
             if('@odata.id'  not in coll['Members'][0] ):
                 rft.printErr("Error: getPathBy --One option: improper formatted link-no @odata.id")
