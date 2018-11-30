@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.8] - 2018-11-30
+- Made the "One" option enabled by default for Systems, Managers, and Chassis collections
+
 ## [1.0.7] - 2018-10-19
 - Made fix to allow for 202 responses on operations
 
