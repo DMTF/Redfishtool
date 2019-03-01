@@ -25,6 +25,7 @@ from .Chassis import RfChassisMain
 from .Managers import RfManagersMain
 from .SessionService import RfSessionServiceMain
 from .AccountService import RfAccountServiceMain
+from .UpdateService import RfUpdateServiceMain
 from .raw import RfRawMain
 
 def displayUsage(rft,*argv,**kwargs):
@@ -101,6 +102,7 @@ def listSubcommands(rft):
         print("     Managers              -- operations on Managers in the /Managers collection")
         print("     AccountService        -- operations on AccountService including user administration")
         print("     SessionService        -- operations on SessionService including Session login/logout")
+        print("     UpdateService         -- operations on UpdateService including software updates")
         print("     odata                 -- get the Odata Service document: GET ^/redfish/v1/odata")
         print("     metadata              -- get the CSDL metadata document: GET ^/redfish/v1/$metadata")
         print("     raw                   -- subcommand to execute raw http methods(GET,PATCH,POST...) and URIs")
@@ -409,6 +411,7 @@ def runSubCmd(rft):
         managers=RfManagersMain()
         sessionService=RfSessionServiceMain()
         accountService=RfAccountServiceMain()
+        updateService=RfUpdateServiceMain()
         raw=RfRawMain()
 
         #  dispatch table for each subcommand:   "cmdName": cmdClass.cmdFunction"
@@ -424,6 +427,7 @@ def runSubCmd(rft):
             "Chassis":          chassis.ChassisMain,
             "Managers":         managers.ManagersMain,
             "AccountService":   accountService.AccountServiceMain,
+            "UpdateService":    updateService.UpdateServiceMain,
             "SessionService":   sessionService.SessionServiceMain,
             "raw":              raw.RawMain,
             "hello":              helloSubcmd
