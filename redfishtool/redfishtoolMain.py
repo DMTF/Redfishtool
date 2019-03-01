@@ -31,7 +31,7 @@ def displayUsage(rft,*argv,**kwargs):
         rft.printErr("  Usage:",noprog=True)
         rft.printErr("   {} [OPTIONS]  <SubCommand> <operation> [<args>]... ",prepend="  ")
         rft.printErr("   {} [OPTIONS]  hmraw  <method> <hmUrl> [<data>]",     prepend="  ")
-              
+
 def displayOptions(rft):
         print("")
         print("  Common OPTIONS:")
@@ -72,7 +72,7 @@ def displayOptions(rft):
         print("   -m <prop>:<val> --match=<prop>:val>--use <prop>=<val> search of 2nd-level collection to specify member")
         print("   -l <link>  --link=<link>         -- Use <link> (eg /redfish/v1/SYstems/1/Processors/1) to reference a 2nd level resource")
         print("                                    --   A -I|M|F|1|L option is still required to specify the link to the top-lvl collection")
-        print("   -a,  --all                       -- Returns all members of the 2nd level collection if the operation is a Get on the ") 
+        print("   -a,  --all                       -- Returns all members of the 2nd level collection if the operation is a Get on the ")
         print("                                    --   2nd level collection (eg Processors). -I|M|F|1|L still specifies the top-lvl collection.")
         print("")
         print("  Additional OPTIONS:")
@@ -88,7 +88,7 @@ def displayOptions(rft):
         print("   -H <hdrs>, --Headers=<hdrs>      -- Specify the request header list--overrides defaults. Format \"{ A:B, C:D...}\" ")
         print("   -D <flag>,  --Debug=<flag>       -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format")
         print("")
-        
+
 def listSubcommands(rft):
         # print a list of Main subcommands in order to show them in lc subcommand
         print("  Subcommands:")
@@ -122,7 +122,7 @@ def main(argv):
 
     try:
         opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:EI:M:F1L:i:m:l:aW:A:S:R:H:D:C",
-                        ["Version", "help", "verbose", "status", "quiet", 
+                        ["Version", "help", "verbose", "status", "quiet",
                          "user=", "password=", "rhost=", "token=", "config=", "Timeout=",
                          "Prop=", "data=", "Entries", "Id=", "Match=", "First", "One", "Link=",
                          "id=", "match=", "link", "all",
@@ -132,7 +132,7 @@ def main(argv):
         rft.printErr("Error parsing options")
         displayUsage(rft)
         sys.exit(1)
-        
+
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             rft.help=True
@@ -164,9 +164,9 @@ def main(argv):
             else:
                 rft.printErr("Invalid -Timeout value: {}".format(arg))
                 rft.printErr("     Expect: -T <timeout> where <timeout> is a decimal int",noprog=True)
-                sys.exit(1)                
+                sys.exit(1)
         # options that reference a specific property for Get operations
-        elif opt in ("-P", "--Prop"):       
+        elif opt in ("-P", "--Prop"):
             rft.prop=arg
             rft.gotPropOptn=True
         # options used by raw subcommand to specify http method (-X, --request) and request data (-d, --data)
@@ -180,7 +180,7 @@ def main(argv):
             rft.Id=arg
             rft.gotIdOptn=True
             rft.IdOptnCount+=1
-        elif opt in ("-M", "--Match"):  
+        elif opt in ("-M", "--Match"):
             # arg is of the form: "<prop>:<value>"
             pair = arg.split(':', 1)
             if len(pair) == 2:
@@ -192,13 +192,13 @@ def main(argv):
                 rft.printErr("Invalid --Match= option format: {}".format(arg))
                 rft.printErr("     Expect --Match=<prop>:<value> Ex -M AssetTag:5555, -Match=AssetTag:5555",noprog=True)
                 sys.exit(1)
-        elif opt in ("-F", "--First"):        
+        elif opt in ("-F", "--First"):
             rft.firstOptn=True
             rft.IdOptnCount+=1
         elif opt in ("-1", "--One"):
             rft.oneOptn=True
             rft.IdOptnCount+=1
-        elif opt in ("-L", "--Link"):       
+        elif opt in ("-L", "--Link"):
             rft.Link=arg
             rft.gotIdOptn=True
             rft.IdOptnCount+=1
@@ -218,11 +218,11 @@ def main(argv):
                 rft.printErr("Invalid level2 --match= option format: {}".format(arg))
                 rft.printErr("     Expect --match=<prop>:<value> Ex -m ProcessorType:CPU, -match=ProcessorType:CPU",noprog=True)
                 sys.exit(1)
-        elif opt in ("-l", "--link"):       
+        elif opt in ("-l", "--link"):
             rft.linkLevel2=arg
             rft.gotIdLevel2Optn=True
             rft.IdLevel2OptnCount+=1
-        elif opt in ("-a", "--all"):        
+        elif opt in ("-a", "--all"):
             rft.allOptn=True        # additional options
             rft.IdLevel2OptnCount+=1
         elif opt in ("-W", "--Wait"):           #specify how long to ping rhost before sending http requests 0=no ping
@@ -305,13 +305,13 @@ def main(argv):
         rft.gotMatchOptn=True
         rft.firstOptn=True
 
-        
+
     # if -i <id>, convert to -m <prop>:<val>
     if( rft.gotIdLevel2Optn is True ):
         rft.matchLevel2Prop="Id"
         rft.matchLevel2Value=rft.IdLevel2
         rft.gotMatchLevel2Optn=True
-        
+
     # check for invalid Level-2 collection member reference options
     # there are 3 ways to specify the level-2 colltion member:  -i<id>  | -m<prop>:<val>   |  -l<link> | -a
     # a command should only include one of these.  each time one if found during option processing, IdLevel2OptnCount is incremented
@@ -319,7 +319,7 @@ def main(argv):
         rft.printErr("Syntax error: invalid mix of options -i,-m,-a used to specify a 2nd-level collection member.")
         rft.printErr("    Valid combinations: -i  |  -m  | -l | -a ",noprog=True)
         displayUsage(rft)
-        sys.exit(1)    
+        sys.exit(1)
 
     # -P, -a will be validated against the operation in the Subcommand processing
     # whether at least one -I|-M|-1|-F|-L or one -i|-m|-l|-a is required is validated in subcommand processing based on operation
@@ -355,7 +355,7 @@ def main(argv):
     rft.printVerbose(5,"Main: options parsed.  Now lookup subcommand and execute it")
 
     # instansiate the SubCmd object, and run the specified subcommand
-    #rfCmds=RfSubCmds()   
+    #rfCmds=RfSubCmds()
     #rc=rfCmds.runSubCmd(rft)
     rc,r,j,d=runSubCmd(rft)
     if(rc !=0 ):
@@ -373,7 +373,7 @@ def main(argv):
         rft.printVerbose(5,"    Status code:{}".format(r.status_code))
         rft.printStatus(1,r=r)
         rft.printStatus(2,r=r)
-        
+
     # print out result here.
     if( j is True and d is not None):
         output=json.dumps(d,indent=4)
@@ -389,7 +389,7 @@ def main(argv):
 
     rft.printVerbose(5,"Main: Done")
     #print("headers:{}".format(r.headers))
-        
+
     sys.exit(0)
 
 
@@ -431,17 +431,17 @@ def runSubCmd(rft):
 
         rft.printVerbose(5,"runSubCmd: subcmd: {}".format(rft.subcommand))
         rft.printVerbose(5,"runSubCmd: argvs:  {}".format(rft.subcommandArgv))
-            
+
         if rft.subcommand in subCmdTable:
             rft.printVerbose(5,"runSubCmd: found SubCmd: {} in table. executing".format(rft.subcommand))
             rc,r,j,d=subCmdTable[rft.subcommand](rft,cmdTop=True)
             return(rc,r,j,d)
-        
+
         else: # invalit subcmd
             rft.printErr("Invalid SubCommand: {}".format(rft.subcommand))
             return(1,None,False,None)
 
-    
+
 def helloSubcmd(rft, cmdTop=False):
         rft.printVerbose(5,"Main: in hello subcommand")
         if(rft.help):
@@ -482,4 +482,3 @@ TODO
 
 
 '''
-
