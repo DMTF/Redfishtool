@@ -50,7 +50,7 @@ class RfUpdateServiceMain():
         print("     [get]                     -- get the UpdateService object. ")
         print("     examples                  -- example commands with syntax")
         print("     hello                     -- UpdateService hello -- debug command")
-        print("     firmwareinv               -- return the firmware inventory")
+        print("     firmwareinv [component]   -- return the firmware inventory or the details on the specific component")
         return(0)
 
     def runOperation(self,rft):
@@ -172,9 +172,13 @@ class RfUpdateServiceOperations():
             rft.printErr("Error:  UpdateService does not have a FirmwareInventory link")
             return(rc,None,False,None)
 
-        rft.printVerbose(4,"UpdateService: get FirmwareInventory: link is: {}".format(FirmwareInventoryLink))
-
         if cmdTop is True:   prop=rft.prop
+
+        # If user passed in component id then append to link
+        if( len(sc.args) == 2):
+            FirmwareInventoryLink += "/" + sc.args[1]
+
+        rft.printVerbose(4,"UpdateService: get FirmwareInventory: link is: {}".format(FirmwareInventoryLink))
 
         # do a GET to get the FirmwareInventory, if -P show property, else show full response
         rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=FirmwareInventoryLink, prop=prop)
@@ -186,4 +190,5 @@ class RfUpdateServiceOperations():
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         print(" {} -r<ip> UpdateService                          # gets the UpdateService".format(rft.program))
         print(" {} -r<ip> UpdateService firmwareinv              # gets the UpdateService FirmwareInventory".format(rft.program))
+        print(" {} -r<ip> UpdateService firmwareinv <component>  # gets the details of input UpdateService FirmwareInventory component".format(rft.program))
         return(0,None,False,None)
