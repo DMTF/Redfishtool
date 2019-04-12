@@ -50,6 +50,7 @@ class RfUpdateServiceMain():
         print("     [get]                     -- get the UpdateService object. ")
         print("     examples                  -- example commands with syntax")
         print("     hello                     -- UpdateService hello -- debug command")
+        print("     firmwareinv               -- return the firmware inventory")
         return(0)
 
     def runOperation(self,rft):
@@ -60,7 +61,8 @@ class RfUpdateServiceMain():
         operationTable = {
             "get":                          op.get,
             "hello":                        op.hello,
-            "examples":                     op.examples
+            "examples":                     op.examples,
+            "firmwareinv":                  op.firmwareinv
         }
 
         rft.printVerbose(5,"UpdateService:runOperation: operation: {}".format(self.operation))
@@ -116,6 +118,22 @@ class RfUpdateServiceOperations():
         self.UpdateServicePath=None
         self.UpdateServiceCollectionDict=None
 
+    def getUpdateServicePaths(self,rft):
+        # 1st get serviceRoot
+        svcRoot=RfServiceRoot()
+        rc,r,j,d = svcRoot.getServiceRoot(rft)
+        if( rc != 0 ):
+            rft.printErr("get UpdateService: Error getting service root, aborting")
+            return(rc,None,None,None)
+
+        # get the link to the UpdateService
+        # need to test we got good data
+        if (("UpdateService" in d) and ("@odata.id" in d["UpdateService"])):
+            UpdateServiceLink=d["UpdateService"]["@odata.id"]
+        else:
+            rft.printErr("Error:  root does not have a UpdateService link")
+            return(4,None,None,None)
+        return rc,d,r,UpdateServiceLink
 
     def hello(self,sc,op,rft,cmdTop=False):
         rft.printVerbose(4,"in hello")
@@ -126,20 +144,9 @@ class RfUpdateServiceOperations():
     def get(self,sc,op,rft, cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
 
-        # 1st get serviceRoot
-        svcRoot=RfServiceRoot()
-        rc,r,j,d = svcRoot.getServiceRoot(rft)
+        rc,d,r,UpdateServiceLink = self.getUpdateServicePaths(rft)
         if( rc != 0 ):
-            rft.printErr("get UpdateService: Error getting service root, aborting")
             return(rc,r,False,None)
-
-        # get the link to the UpdateService
-        # need to test we got good data
-        if (("UpdateService" in d) and ("@odata.id" in d["UpdateService"])):
-            UpdateServiceLink=d["UpdateService"]["@odata.id"]
-        else:
-            rft.printErr("Error:  root does not have a UpdateService link")
-            return(4)
 
         rft.printVerbose(4,"UpdateService: get UpdateService: link is: {}".format(UpdateServiceLink))
 
@@ -151,7 +158,32 @@ class RfUpdateServiceOperations():
         if(rc==0):   rft.printVerbose(1," UpdateService Resource:",skip1=True, printV12=cmdTop)
         return(rc,r,j,d)
 
+    def firmwareinv(self,sc,op,rft, cmdTop=False, prop=None):
+        rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
+
+        rc,r,j,d = self.get(sc,op,rft)
+        if( rc != 0 ):
+            return(rc,r,False,None)
+
+        # get the firmware inventory link
+        if (("FirmwareInventory" in d) and ("@odata.id" in d["FirmwareInventory"])):
+            FirmwareInventoryLink=d["FirmwareInventory"]["@odata.id"]
+        else:
+            rft.printErr("Error:  UpdateService does not have a FirmwareInventory link")
+            return(rc,None,False,None)
+
+        rft.printVerbose(4,"UpdateService: get FirmwareInventory: link is: {}".format(FirmwareInventoryLink))
+
+        if cmdTop is True:   prop=rft.prop
+
+        # do a GET to get the FirmwareInventory, if -P show property, else show full response
+        rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=FirmwareInventoryLink, prop=prop)
+
+        if(rc==0):   rft.printVerbose(1," FirmwareInventory Resource:",skip1=True, printV12=cmdTop)
+        return(rc,r,j,d)
+
     def examples(self,sc,op,rft,cmdTop=False,prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         print(" {} -r<ip> UpdateService                          # gets the UpdateService".format(rft.program))
+        print(" {} -r<ip> UpdateService firmwareinv              # gets the UpdateService FirmwareInventory".format(rft.program))
         return(0,None,False,None)
