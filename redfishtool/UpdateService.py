@@ -51,6 +51,7 @@ class RfUpdateServiceMain():
         print("     examples                  -- example commands with syntax")
         print("     hello                     -- UpdateService hello -- debug command")
         print("     firmwareinv [component]   -- return the firmware inventory or the details on the specific component")
+        print("     updatefw <file path>      -- upload input file to UpdateService")
         return(0)
 
     def runOperation(self,rft):
@@ -62,7 +63,8 @@ class RfUpdateServiceMain():
             "get":                          op.get,
             "hello":                        op.hello,
             "examples":                     op.examples,
-            "firmwareinv":                  op.firmwareinv
+            "firmwareinv":                  op.firmwareinv,
+            "updatefw":                     op.updatefw
         }
 
         rft.printVerbose(5,"UpdateService:runOperation: operation: {}".format(self.operation))
@@ -186,9 +188,34 @@ class RfUpdateServiceOperations():
         if(rc==0):   rft.printVerbose(1," FirmwareInventory Resource:",skip1=True, printV12=cmdTop)
         return(rc,r,j,d)
 
+    def updatefw(self,sc,op,rft, cmdTop=False, prop=None):
+        rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
+
+        rc,r,j,d = self.get(sc,op,rft)
+        if( rc != 0 ):
+            return(rc,r,False,None)
+
+        # Get the Uri to push too
+        if ("HttpPushUri" in d):
+            FirmwareUpdateLink=d["HttpPushUri"]
+        else:
+            rft.printErr("Error:  UpdateService does not have a HttpPushUri link")
+            return(rc,None,False,None)
+        rft.printVerbose(4,"UpdateService: updatefw: link is: {}".format(FirmwareUpdateLink))
+
+        # Upload the image
+        data=open(sc.args[1],'rb').read()
+        rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'POST', r.url, relPath=FirmwareUpdateLink,
+                                        headersInput={'Content-Type':'application/octet-stream'},reqData=data)
+
+        if(rc==0):   rft.printVerbose(1," FirmwareInventory Resource:",skip1=True, printV12=cmdTop)
+
+        return(rc,r,j,d)
+
     def examples(self,sc,op,rft,cmdTop=False,prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         print(" {} -r<ip> UpdateService                          # gets the UpdateService".format(rft.program))
         print(" {} -r<ip> UpdateService firmwareinv              # gets the UpdateService FirmwareInventory".format(rft.program))
         print(" {} -r<ip> UpdateService firmwareinv <component>  # gets the details of input UpdateService FirmwareInventory component".format(rft.program))
+        print(" {} -r<ip> UpdateService updatefw <file path>     # upload and activate input firmware file (application based on ApplyTime property)".format(rft.program))
         return(0,None,False,None)
