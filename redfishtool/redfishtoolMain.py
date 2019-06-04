@@ -136,7 +136,7 @@ def main(argv):
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             rft.help=True
-        elif opt in ("-V", "--Version"):
+        elif opt in ("-V", "--version"):
             print("{} Version: {}".format(rft.program, rft.version))
             sys.exit(0)
         elif opt in ("-v", "--verbose"):
