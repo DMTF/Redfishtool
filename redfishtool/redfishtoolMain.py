@@ -156,6 +156,18 @@ def main(argv):
             rft.authToken=rft.token
         elif opt in ("-c", "--config"):         #read additional options from a file
             rft.configFile=arg
+            try:
+                with open(arg, 'r') as f:
+                    configdata = json.load(f)
+                if 'user' in configdata and 'password' in configdata:
+                    rft.user = configdata['user']
+                    rft.password = configdata['password']
+                    rft.printVerbose(1,"Main: get pw from configfile, usr:{}, pw:{}".format(rft.user, rft.password))
+                else:
+                    rft.printErr("Invalid --config= filedata: {}".format(configdata))
+            except IOError:
+                rft.printErr("Invalid: Failed to read configfile")
+
         elif opt in ("-T", "--Timeout"):        #Specify http timeout in  seconds
             timePattern="^([1-9][0-9]*)$"
             timeMatch=re.search(timePattern,arg)
