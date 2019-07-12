@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.9] - 2019-07-12
+- Added the ability to get credentials from the config file rather than specifying them on the command line
+
 ## [1.0.8] - 2018-11-30
 - Made the "One" option enabled by default for Systems, Managers, and Chassis collections
 

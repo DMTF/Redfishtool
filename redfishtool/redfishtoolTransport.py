@@ -57,8 +57,8 @@ class RfTransport():
     def __init__(self):
         # constant parameters-- these dont change and are not updated
         self.program="redfishtool"              # program name (in case we want to change it)
-        self.version="1.0.8"                    # this redfishtool version
-        self.releaseDate="11/30/2018"           # release date for this version of redfishtool
+        self.version="1.0.9"                    # this redfishtool version
+        self.releaseDate="07/12/2019"           # release date for this version of redfishtool
         self.downloadFrom="https://github.com/DMTF/Redfishtool" # where to find redfishtool
         self.magic="12345"                      # used for debug to test for a known parameter in this object
         self.UNAUTHENTICATED_API=1              # unauthenticated API that doesn't send credentials in body data
