@@ -231,7 +231,7 @@ class RfChassisOperations():
         collUrl=r.url
 
         # search collection to find path to system
-        sysPath,rc,r,j,d=rft.getPathBy(rft, r, d)
+        sysPath,rc,r,j,d=rft.getPathBy(rft, r, d, prop)
         if( rc !=0 ):    #if a path was not found, its an error
             return(rc,r,j,d)
         
@@ -422,12 +422,12 @@ class RfChassisOperations():
 
     def getPower(self,sc,op, rft, cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
+        resName="Power"
 
         # get the Chassis resource first
-        rc,r,j,d=op.get(sc,op, rft)     
+        rc,r,j,d=op.get(sc, op, rft, cmdTop, resName)
         if( rc != 0):  return(rc,r,False,None)
         
-        resName="Power"
         # get the link to the Power resource under Chassis
         if ((resName in d) and ("@odata.id" in d[resName])):
             resLink=d[resName]["@odata.id"]
@@ -447,12 +447,11 @@ class RfChassisOperations():
 
     def getThermal(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
-
+        resName="Thermal"
         # get the Chassis resource first
-        rc,r,j,d=op.get(sc,op, rft)     
+        rc,r,j,d=op.get(sc, op, rft, cmdTop, resName)
         if( rc != 0):  return(rc,r,False,None)
         
-        resName="Thermal"
         # get the link to the Thermal resource under Chassis
         if ((resName in d) and ("@odata.id" in d[resName])):
             resLink=d[resName]["@odata.id"]

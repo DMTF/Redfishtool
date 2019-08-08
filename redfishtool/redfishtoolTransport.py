@@ -857,7 +857,7 @@ class RfTransport():
 
 
 
-    def getPathBy(self,rft, r, coll):
+    def getPathBy(self,rft, r, coll, prop=None):
         if('Members'  not in coll):
             rft.printErr("Error: getPathBy: no members array in collection")
             return(None,1,None,False,None)
@@ -883,10 +883,15 @@ class RfTransport():
 
         elif(rft.oneOptn):
             if(numOfLinks > 1):
-                rc, r, j, d = rft.listCollection(rft, r, coll, prop=None)
+                rc, r, j, d = rft.listCollection(rft, r, coll, prop)
                 id_list = []
+
                 if not rc and 'Members' in d:
-                    id_list = [m['Id'] for m in d['Members'] if 'Id' in m]
+                    if prop is not None:
+                        if d['Members'] and '@odata.id' in d['Members'][0]:
+                            return(d['Members'][0]['@odata.id'],0,None,False,None)
+                    else:
+                        id_list = [m['Id'] for m in d['Members'] if 'Id' in m]
                 rft.printErr("Error: No target specified, but multiple {} IDs found: {}"
                              .format(rft.subcommand, repr(id_list)))
                 rft.printErr("Re-issue command with '-I <Id>' to select target.")
@@ -1034,7 +1039,8 @@ class RfTransport():
                     if( prop is not None ):
                         listMember[prop]=propVal           
                     # add the member to the listd
-                    members.append(listMember)
+                    if (prop is None) or (propVal is not None):
+                        members.append(listMember)
 
         #create base list dictionary
         collPath=urlparse(baseUrl).path
