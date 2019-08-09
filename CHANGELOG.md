@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.0] - 2019-08-09
+- Added support for getting Power and Thermal resources with a specified chassis, or leaving it unspecified if there is exactly one chassis
+
 ## [1.0.9] - 2019-07-12
 - Added the ability to get credentials from the config file rather than specifying them on the command line
 
