@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ "$(python -c 'import sys; print(sys.version_info[0])')" == "2" ]]; then
+if [[ "$(python3 -c 'import sys; print(sys.version_info[0])')" == "2" ]]; then
     TMP_VIRTUALENV="virtualenv"
 else
     TMP_VIRTUALENV="python3 -m virtualenv --python=python3"
@@ -24,7 +24,7 @@ ${TMP_VIRTUALENV} --extra-search-dir=/tmp/wheels ${SETUPTOOLS} ${PIPBOOTSTRAP}
 source ${PIPBOOTSTRAP}/bin/activate
 
 # Upgrade to the latest version of virtualenv
-bash -c "source ${PIPBOOTSTRAP}/bin/activate; pip install --upgrade ${PIP_ARGS} virtualenv"
+bash -c "source ${PIPBOOTSTRAP}/bin/activate; pip3 install --upgrade ${PIP_ARGS} virtualenv"
 
 # Forget the cached locations of python binaries
 hash -r
