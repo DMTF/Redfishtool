@@ -39,6 +39,7 @@ import json
 import sys
 import socket
 import time
+import ipaddress
 from urllib.parse import urljoin, urlparse, urlunparse
 from requests.auth import HTTPBasicAuth, AuthBase
 from .ServiceRoot import RfServiceRoot
@@ -212,7 +213,15 @@ class RfTransport():
 
             # calculate the rootUri including scheme,rhost,rootPath properly
             scheme=rft.getApiScheme(rft.UNAUTHENTICATED_API)
-            scheme_tuple=[scheme,rft.rhost, rft.rootPath, "","",""]
+
+            rhost = rft.rhost
+            try:
+                if ipaddress.ip_address(rhost).version == 6:
+                    rhost = '[{}]'.format(rhost)
+            except ValueError:
+                pass
+
+            scheme_tuple=[scheme, rhost, rft.rootPath, "","",""]
             rootUrl=urlunparse(scheme_tuple)
             rft.rootUri=rootUrl
             # save parameters
