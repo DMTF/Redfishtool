@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.1] - 2020-01-10
+- Made fixes to properly format IPv6 URLs
+
 ## [1.1.0] - 2019-08-09
 - Added support for getting Power and Thermal resources with a specified chassis, or leaving it unspecified if there is exactly one chassis
 
