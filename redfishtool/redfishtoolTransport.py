@@ -1045,11 +1045,10 @@ class RfTransport():
                     # create a member dict. Always include  Id and path
                     listMember={"Id": d["Id"], "@odata.id": d["@odata.id"] }
                     # if a property was specified to include, add it to the list dict
-                    if( prop is not None ):
+                    if( prop in d ):
                         listMember[prop]=propVal           
-                    # add the member to the listd
-                    if (prop is None) or (propVal is not None):
-                        members.append(listMember)
+                    # add the member to the list
+                    members.append(listMember)
 
         #create base list dictionary
         collPath=urlparse(baseUrl).path
