@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.2] - 2020-04-10
+- Made fix to collection listing to show members when optional properties are not present
+
 ## [1.1.1] - 2020-01-10
 - Made fixes to properly format IPv6 URLs
 
