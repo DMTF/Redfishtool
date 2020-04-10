@@ -85,6 +85,7 @@ def displayOptions(rft):
         print("   -C         --CheckRedfishVersion -- tells Redfishtool to execute GET /redfish to verify that the rhost supports")
         print("                                       the specified redfish protocol version before executing a sub-command. ")
         print("                                       The -C flag is auto-set if the -R Latest or -W ... options are selected")
+        print("   -B,        --Blocking            -- Wait for asynchronous requests to complete.")
         print("   -H <hdrs>, --Headers=<hdrs>      -- Specify the request header list--overrides defaults. Format \"{ A:B, C:D...}\" ")
         print("   -D <flag>,  --Debug=<flag>       -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format")
         print("")
@@ -121,13 +122,13 @@ def main(argv):
     rft=RfTransport()
 
     try:
-        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:EI:M:F1L:i:m:l:aW:A:S:R:H:D:C",
+        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:EI:M:F1L:i:m:l:aW:A:S:R:H:D:CB",
                         ["Version", "help", "verbose", "status", "quiet", 
                          "user=", "password=", "rhost=", "token=", "config=", "Timeout=",
                          "Prop=", "data=", "Entries", "Id=", "Match=", "First", "One", "Link=",
                          "id=", "match=", "link", "all",
                          "Wait=", "Auth=","Secure=", "RedfishVersion=", "Headers=", "Debug=",
-                         "CheckRedfishVersion"  ])
+                         "CheckRedfishVersion", "Blocking"])
     except getopt.GetoptError:
         rft.printErr("Error parsing options")
         displayUsage(rft)
@@ -284,6 +285,8 @@ def main(argv):
                 sys.exit(1)
         elif opt in ("-C", "--CheckRedfishVersion"):
             rft.checkProtocolVer=True
+        elif opt in ("-B", "--Blocking"):
+            rft.blocking=True
         else:
             rft.printErr("Error: Unsupported option: {}".format(opt))
             displayUsage(rft)
@@ -350,8 +353,8 @@ def main(argv):
     rft.printVerbose(5,"Main: subcmd: {}, subCmdArgs:{}".format(rft.subcommand,rft.subcommandArgv))
     rft.printVerbose(5,"Main: verbose={}, status={}, user={}, password={}, rhost={}".format(rft.verbose, rft.status,
                                                         rft.user,rft.password,rft.rhost))
-    rft.printVerbose(5,"Main: token={}, RedfishVersion={}, Auth={}, Timeout={}".format(rft.token,
-                                                        rft.protocolVer, rft.auth, rft.timeout))
+    rft.printVerbose(5,"Main: token={}, RedfishVersion={}, Auth={}, Timeout={}, Blocking={}".format(rft.token,
+                                                        rft.protocolVer, rft.auth, rft.timeout, rft.blocking))
     rft.printVerbose(5,"Main: prop={}, Id={}, Match={}:{}, First={}, -1={}, Link={}".format( rft.prop,
                         rft.Id, rft.matchProp,rft.matchValue, rft.firstOptn, rft.oneOptn, rft.Link))
     rft.printVerbose(5,"Main: gotIdOptn={}, IdOptnCount={}, gotPropOptn={}, gotMatchOptn={}, gotEntriesOptn={}".format(

@@ -40,6 +40,8 @@ import sys
 import socket
 import time
 import ipaddress
+from datetime import datetime, timedelta
+from dateutil import parser
 from urllib.parse import urljoin, urlparse, urlunparse
 from requests.auth import HTTPBasicAuth, AuthBase
 from .ServiceRoot import RfServiceRoot
@@ -88,6 +90,7 @@ class RfTransport():
         self.auth="Basic"  # or "Session" using Basic as default now
         self.timeout=10         # http transport timeout in seconds, stored as int here
         self.checkProtocolVer=False  # if -C option, then we need to check/verify the protocol ver. dflt=false
+        self.blocking=False
 
         # more option parsing variables
         self.prop=None
@@ -543,7 +546,11 @@ class RfTransport():
                     return(rc,r,False,None)
                 elif (r.status_code == 202 and method in ["DELETE", "PATCH", "POST", "PUT"]):
                     success = True
-                    return (rc, r, False, None)
+                    if rft.blocking and r.headers.get("Location"):
+                        return rft.waitForTask(r, urlBase2, headers=hdrs, auth=authType,
+                                               verify=verify, jsonData=jsonData, **kwargs)
+                    else:
+                        return (rc, r, False, None)
                 elif((r.status_code==200) or (r.status_code==201) ):  
                     if( jsonData is True):
                         try:
@@ -592,7 +599,56 @@ class RfTransport():
         rft.printErr("Transport: Internal error; reached end of function without returning")
         return 5, r, False, None
 
+    def sleepFor(self, response):
+        retry_after = response.headers.get("Retry-After", 1)
+        if isinstance(retry_after, int) or retry_after.isdigit():
+            # Retry-After: 120
+            sleep_for = timedelta(seconds=int(retry_after))
+        else:
+            # Retry-After: Fri, 31 Dec 1999 23:59:59 GMT
+            sleep_for = parser.parse(retry_after) - datetime.now()
+        return max(0, sleep_for.total_seconds())
 
+    def waitForTask(self, r, url_base, headers=None, auth=None,
+                    verify=False, max_wait=60, jsonData=True, **kwargs):
+        self.printVerbose(2, "Transport:waitForTask: enter")
+        if headers is None:
+            headers = {}
+        else:
+            headers = headers.copy()
+        if "Content-Type" in headers:
+            del headers["Content-Type"]
+        timeout = (self.waitTime, self.timeout)
+        location = r.headers.get("Location")
+        uri = urlparse(location).path
+        url = urljoin(url_base, uri)
+        timeout_at = time.time() + max_wait  # time to give up on async task
+        while r.status_code == 202:
+            sleep_for = self.sleepFor(r)
+            self.printVerbose(2, "Transport:waitForTask: sleep for %s seconds" % sleep_for)
+            time.sleep(sleep_for)
+            self.printVerbose(3, "Transport:SendRecv:    {} {}".format('GET', url))
+            t1 = time.time()
+            r = requests.get(url, headers=headers, auth=auth, verify=verify,
+                             timeout=timeout, **kwargs)
+            self.elapsed = time.time() - t1
+            self.printStatus(1, r=r)
+            self.printStatus(2, r=r)
+            if time.time() >= timeout_at and r.status_code == 202:
+                break
+        if r.ok:
+            if jsonData and "application/json" in r.headers.get("Content-Type", ""):
+                try:
+                    d = r.json()
+                    return 0, r, jsonData, d
+                except Exception as e:
+                    self.printErr("Caught exception decoding JSON from async "
+                                  "task response; Exception: %s" % e)
+                    return 5, r, False, None
+            else:
+                return 0, r, False, None
+        else:
+            return 5, r, False, None
 
     def getPropFromDict(self,rft,r,d,prop):
         if(prop in d):
