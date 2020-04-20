@@ -129,7 +129,7 @@ For `Systems`, `Managers`, and `Chassis` commands that require specifying a top-
     -C         --CheckRedfishVersion -- tells Redfishtool to execute GET /redfish to verify that the rhost supports
                                         the specified redfish protocol version before executing a sub-command. 
                                         The -C flag is auto-set if the -R Latest or -W ... options are selected
-    -B,        --Blocking            -- Wait for asynchronous requests to complete.
+    -N,        --NonBlocking         -- Do not wait for asynchronous requests to complete.
     -H <hdrs>, --Headers=<hdrs>      -- Specify the request header list--overrides defaults. Format "{ A:B, C:D...}" 
     -D <flag>,  --Debug=<flag>       -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format
 
