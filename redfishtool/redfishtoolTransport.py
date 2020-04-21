@@ -550,9 +550,8 @@ class RfTransport():
                         return rft.waitForTask(r, urlBase2, headers=hdrs, auth=authType,
                                                verify=verify, jsonData=jsonData, **kwargs)
                     else:
-                        if not rft.blocking and r.headers.get("Location"):
-                            rft.printTaskStatus("NonBlocking: Task Monitor is %s\n" %
-                                                r.headers.get("Location"))
+                        rft.printTaskStatus("Task Monitor URL is %s\n" %
+                                            r.headers.get("Location", "<not available>"))
                         return (rc, r, False, None)
                 elif((r.status_code==200) or (r.status_code==201) ):  
                     if( jsonData is True):
