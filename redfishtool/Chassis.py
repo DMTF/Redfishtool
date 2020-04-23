@@ -23,6 +23,7 @@
 #  - setAssetTag -- patches the assetTag of Chassis instance w/ etag support
 #  - setIndicatorLed --sets id LED to a specified value w/ etag support
 #  - getPower - get Processors collection, processor instance, or all
+#  - getSensors - get all sensors
 #  - getThermal - get Ethernet collection, instance, all
 #  - setPowerLimit - Set the PowerLimit for a member of the powerControl array
 #  - getPowerReading [consumed] - get the powerControl array, or ConsumedWatts from pwrCntl[0]
@@ -67,6 +68,7 @@ class RfChassisMain():
         print("     setIndicatorLed  <state>  -- set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking")
         print("     Power                     -- get the full Power resource under a specified Chassis instance.")
         print("     Thermal                   -- get the full Thermal resource under a specified Chassis instance.")
+        print("     Sensors                   -- get all sensors.")
         print("")
         print("     getPowerReading [-i<indx>] [consumed]-- get powerControl resource w/ power capacity, PowerConsumed, and power limits")
         print("                                  if \"consumed\" keyword is added, then only current usage of powerControl[indx] is returned")
@@ -744,6 +746,65 @@ class RfChassisOperations():
     def clearLog(self,sc,op,rft,cmdTop=False, prop=None):
         rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
         return(8,None,False,None)
+
+    
+    def getSensors(self,sc,op, rft, cmdTop=False, prop=None):
+        rft.printVerbose(4,"{}:{}: in operation".format(rft.subcommand,sc.operation))
+
+        sys.stdout.write("%-50s %-10s %-10s\n" % ("Sensor", "Reading", "UpperCritical"))
+        resName="Thermal"
+        # get the Chassis resource first
+        rc,r,j,d=op.get(sc, op, rft, cmdTop, resName)
+        if( rc != 0):  return(rc,r,False,None)
+
+        # get the link to the Thermal resource under Chassis
+        if ((resName in d) and ("@odata.id" in d[resName])):
+            resLink=d[resName]["@odata.id"]
+        else:
+            rft.printErr("Error: Chassis resource does not have a {} link".format(resName))
+            return(6,None,False,None)
+
+        if cmdTop is True:   prop=rft.prop
+
+        rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=resLink, prop=prop)
+        if(rc==0):
+            rft.printVerbose(1," {} Resource ".format(resName,skip1=True, printV12=cmdTop))
+
+        collection = ['Temperatures','Fans']
+        for collName in collection:
+          numOfLinks=len(d[collName])
+          for i in range (0,numOfLinks):
+             if collName== 'Fans':
+               sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i]["Reading"],"N/A"))
+             else:
+               sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i]["ReadingCelsius"], d[collName][i]["UpperThresholdCritical"]))
+
+        resName="Sensors"
+        # get the Chassis resource first
+        rc,r,j,d=op.get(sc, op, rft, cmdTop, resName)
+        if( rc != 0):  return(rc,r,False,None)
+
+        # get the link to the Thermal resource under Chassis
+        if ((resName in d) and ("@odata.id" in d[resName])):
+            resLink=d[resName]["@odata.id"]
+        else:
+            rft.printErr("Error: Chassis resource does not have a {} link".format(resName))
+            return(6,None,False,None)
+
+        if cmdTop is True:   prop=rft.prop
+
+        rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=resLink, prop=prop)
+        if(rc==0):
+            rft.printVerbose(1," {} Resource ".format(resName,skip1=True, printV12=cmdTop))
+
+        numOfLinks=len(d["Members"])
+        for i in range (0,numOfLinks):
+             collName="Members"
+             rc1,r1,j1,d1=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=d[collName][i]["@odata.id"], prop=prop)
+             output=json.dumps(d1,indent=4)
+             sys.stdout.write("%-50s %-10s %-10s\n" % (d1["Id"], d1["Reading"], d1["Thresholds"]["UpperCritical"]["Reading"]))
+
+        return(rc,r,False,None)
 
 
     def examples(self,sc,op,rft,cmdTop=False,prop=None):

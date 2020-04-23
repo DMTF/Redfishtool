@@ -26,6 +26,7 @@
 #  - setBootOverride -set boot override enable, and target to valid values
 #    with proper checking for valid values...
 #  - getProcessors - get Processors collection, processor instance, or all
+#  - getInventory - get inventory of Processors, Memory, Fans, Power Supplies
 #  - getEnetInterfaces - get Ethernet collection, instance, all
 #  - getSimpleStorage - get SimpleStorage collection, instance, all
 #  - getLogService - get LogService collection, instance, all
@@ -73,6 +74,7 @@ class RfSystemsMain():
         print("                               -- <targetVal> =None|Pxe|Floppy|Cd|Usb|Hdd|BiosSetup|Utilities|Diags|UefiTarget|")
         print("     Processors [list]         -- get the \"Processors\" collection, or list \"id\" and URI of members.")
         print("      Processors [IDOPTN]        --  get the  member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all")
+        print("     Inventory [list]          -- get the \"Inventory\" collection, or list \"id\" and URI of members.")
         print("")
         print("     EthernetInterfaces [list] -- get the \"EthernetInterfaces\" collection, or list \"id\" and URI of members.")
         print("      EthernetInterfaces [IDOPTN]--  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all")
@@ -104,6 +106,7 @@ class RfSystemsMain():
             "setIndicatorLed":              op.setIndicatorLed,
             "setBootOverride":              op.setBootOverride,
             "Processors":                   op.getProcessors,
+            "Inventory":                    op.getInventory,
             "EthernetInterfaces":           op.getEnetInterfaces,
             "SimpleStorage":                op.getSimpleStorage,
             "Logs":                         op.getLogService,
@@ -661,6 +664,73 @@ class RfSystemsOperations():
                 rft.printVerbose(1," Get ALL {} Collection Members".format(collName,skip1=True, printV12=cmdTop))
         
         return(rc,r,j,d)
+
+
+    def getInventory(self,sc,op, rft, cmdTop=False, prop=None):
+        rft.printVerbose(4,"{}:{}: in operation: getInventory".format(rft.subcommand,sc.operation))
+
+        sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % ("Component","|","Present","|","Functional"))
+        # Get Processor and Memory Inventory
+        collection = ['Processors','Memory']
+        for collName in collection:
+           rc,r,j,d=op.get(sc,op, rft)
+           if( rc != 0):  return(rc,r,False,None)
+           # get the link to the Processors collection
+           if ((collName in d) and ("@odata.id" in d[collName])):
+               Link=d[collName]["@odata.id"]
+           else:
+               rft.printErr("Error: computer system resource does not have a {} link".format(collName))
+               return(6,None,False,None)
+
+           if cmdTop is True:   prop=rft.prop
+
+           rc,r,j,d=rft.getAllCollectionMembers(rft, r.url, relPath=Link)
+           if(rc==0):
+               rft.printVerbose(1," Get ALL {} Collection Members".format(collName,skip1=True, printV12=cmdTop))
+
+           # check if there is a list arg for the operation
+           if( sc.argnum > 1 and sc.args[1] == 'list' ):
+              output=json.dumps(d,indent=4)
+              print(output)
+           else:
+              numOfLinks=len(d["Members"])
+              for i in range (0,numOfLinks):
+                   collName="Members"
+                   sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d[collName][i]["Id"], "|", d[collName][i]["Status"]["State"], "|", d[collName][i]["Status"]["Health"]))
+
+       # get the system resource
+        rc,r,j,d=op.get(sc,op, rft)
+        if( rc != 0):  return(rc,r,False,None)
+
+       # get Fan inventory
+        jsonData=True
+        rc1,r1,j1,d1=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET',r.url, relPath=d["Links"]["Chassis"][0]["@odata.id"]+"/Thermal", prop=prop,jsonData=jsonData)
+
+        # check if there is a list arg for the operation
+        if( sc.argnum > 1 and sc.args[1] == 'list' ):
+             output=json.dumps(d1,indent=4)
+             print(output)
+        else:
+             numOfLinks=len(d1["Fans"])
+             for i in range (0,numOfLinks):
+                 collName="Fans"
+                 sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d1[collName][i]["Name"], "|", d1[collName][i]["Status"]["State"], "|", d1[collName][i]["Status"]["Health"]))
+
+       # get Power Supply inventory
+        rc1,r1,j1,d1=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET',r.url, relPath=d["Links"]["Chassis"][0]["@odata.id"]+"/Power", prop=prop,jsonData=jsonData)
+        # check if there is a list arg for the operation
+        if( sc.argnum > 1 and sc.args[1] == 'list' ):
+             output=json.dumps(d1,indent=4)
+             print(output)
+        else:
+             numOfLinks=len(d1["PowerSupplies"])
+             for i in range (0,numOfLinks):
+                 collName="PowerSupplies"
+             for i in range (0,numOfLinks):
+                 collName="PowerSupplies"
+                 sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d1[collName][i]["Name"], "|", d1[collName][i]["Status"]["State"], "|", d1[collName][i]["Status"]["Health"]))
+
+        return(0,None,False,None)
 
 
     
