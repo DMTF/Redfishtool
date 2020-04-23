@@ -24,5 +24,5 @@ setup(name='redfishtool',
       download_url='https://github.com/DMTF/Redfishtool/archive/1.0.5.tar.gz',
       packages=['redfishtool'],
       scripts=['scripts/redfishtool'],
-      install_requires=['requests']
+      install_requires=['python-dateutil', 'requests']
       )

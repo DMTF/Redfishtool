@@ -47,7 +47,9 @@ pip install redfishtool
 ***redfishtool*** is based on Python 3 and the client system is required to have the Python framework installed before the tool can be installed and executed on the system.
 
 If cloning the tool from Github, as opposed to performing the installation via pip, the following packages are required to be installed and accessible from the python environment:
-* requests - https://github.com/kennethreitz/requests
+
+* requests - [https://github.com/psf/requests]()
+* python-dateutil - [https://github.com/dateutil/dateutil]()
 
 You may install the required packages by running:
 
@@ -127,6 +129,7 @@ For `Systems`, `Managers`, and `Chassis` commands that require specifying a top-
     -C         --CheckRedfishVersion -- tells Redfishtool to execute GET /redfish to verify that the rhost supports
                                         the specified redfish protocol version before executing a sub-command. 
                                         The -C flag is auto-set if the -R Latest or -W ... options are selected
+    -N,        --NonBlocking         -- Do not wait for asynchronous requests to complete.
     -H <hdrs>, --Headers=<hdrs>      -- Specify the request header list--overrides defaults. Format "{ A:B, C:D...}" 
     -D <flag>,  --Debug=<flag>       -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format
 
