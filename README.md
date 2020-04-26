@@ -170,6 +170,7 @@ For Subcommand usage, including subcommand Operations and OtherArgs, execute:
                                  -- <targetVal> =None|Pxe|Floppy|Cd|Usb|Hdd|BiosSetup|Utilities|Diags|UefiTarget|
        Processors [list]         -- get the "Processors" collection, or list "id" and URI of members.
         Processors [IDOPTN]        --  get the  member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
+       Inventory [list]          -- get the "Inventory" collection, or list "id" and URI of members.
 
        EthernetInterfaces [list] -- get the "EthernetInterfaces" collection, or list "id" and URI of members.
         EthernetInterfaces [IDOPTN]--  get the member specified by IDOPTN: -i<id>, -m<prop>:<val>, -l<link>, -a #all
@@ -198,6 +199,7 @@ For Subcommand usage, including subcommand Operations and OtherArgs, execute:
        setIndicatorLed  <state>  -- set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
        Power                     -- get the full Power resource under a specified Chassis instance.
        Thermal                   -- get the full Thermal resource under a specified Chassis instance.
+       Sensors                   -- get all sensors
 
        getPowerReading [-i<indx>] [consumed]-- get powerControl resource w/ power capacity, PowerConsumed, and power limits
                                     if "consumed" keyword is added, then only current usage of powerControl[indx] is returned
@@ -391,6 +393,9 @@ For Subcommand usage, including subcommand Operations and OtherArgs, execute:
      # Gets log entries with Id=SEL from the first System
      redfishtool -r <ip> -u <username> -p <password> Systems -1 Logs -E -i SEL
 
+     # Gets System inventory
+     redfishtool -r <ip> -u <username> -p <password> Systems Inventory
+
 
 ### Chassis subcommand Examples
 
@@ -454,6 +459,9 @@ For Subcommand usage, including subcommand Operations and OtherArgs, execute:
 
      # Gets log entries with Id=SEL from the first Chassis
      redfishtool -r <ip> -u <username> -p <password> Chassis -1 Logs -E -i SEL
+
+     # Gets all Sensors
+     redfishtool -r <ip> -u <username> -p <password> Chassis Sensors
 
 
 ### Managers subcommand Examples

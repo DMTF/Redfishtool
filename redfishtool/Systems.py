@@ -696,7 +696,7 @@ class RfSystemsOperations():
               numOfLinks=len(d["Members"])
               for i in range (0,numOfLinks):
                    collName="Members"
-                   sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d[collName][i]["Id"], "|", d[collName][i]["Status"]["State"], "|", d[collName][i]["Status"]["Health"]))
+                   sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d[collName][i]["Id"], "|", d[collName][i].get("Status", {}).get("State","N/A"), "|", d[collName][i].get("Status",{}).get("Health","N/A")))
 
        # get the system resource
         rc,r,j,d=op.get(sc,op, rft)
@@ -714,7 +714,7 @@ class RfSystemsOperations():
              numOfLinks=len(d1["Fans"])
              for i in range (0,numOfLinks):
                  collName="Fans"
-                 sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d1[collName][i]["Name"], "|", d1[collName][i]["Status"]["State"], "|", d1[collName][i]["Status"]["Health"]))
+                 sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d1[collName][i]["Name"], "|", d1[collName][i].get("Status",{}).get("State","N/A"), "|", d1[collName][i].get("Status",{}).get("Health", "N/A")))
 
        # get Power Supply inventory
         rc1,r1,j1,d1=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET',r.url, relPath=d["Links"]["Chassis"][0]["@odata.id"]+"/Power", prop=prop,jsonData=jsonData)
@@ -726,9 +726,7 @@ class RfSystemsOperations():
              numOfLinks=len(d1["PowerSupplies"])
              for i in range (0,numOfLinks):
                  collName="PowerSupplies"
-             for i in range (0,numOfLinks):
-                 collName="PowerSupplies"
-                 sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d1[collName][i]["Name"], "|", d1[collName][i]["Status"]["State"], "|", d1[collName][i]["Status"]["Health"]))
+                 sys.stdout.write("%-20s %2s %-20s %2s %-10s\n" % (d1[collName][i]["Name"], "|", d1[collName][i].get("Status",{}).get("State", "N/A"), "|", d1[collName][i].get("Status",{}).get("Health","N/A")))
 
         return(0,None,False,None)
 

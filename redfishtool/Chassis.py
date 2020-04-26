@@ -99,6 +99,7 @@ class RfChassisMain():
             "setIndicatorLed":              op.setIndicatorLed,
             "Power":                        op.getPower,
             "Thermal":                      op.getThermal,
+            "Sensors":                      op.getSensors,
             "setPowerLimit":                op.setPowerLimit,
             "getPowerReading":              op.getPowerReading,
             "Logs":                         op.getLogService,
@@ -774,11 +775,12 @@ class RfChassisOperations():
         for collName in collection:
           numOfLinks=len(d[collName])
           for i in range (0,numOfLinks):
-             if collName== 'Fans':
-               sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i]["Reading"],"N/A"))
-             else:
-               sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i]["ReadingCelsius"], d[collName][i]["UpperThresholdCritical"]))
-
+            if collName== 'Fans':
+                sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i].get("Reading",{}),"N/A"))
+            else:
+                sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i].get("ReadingCelsius","N/A"), d[collName][i].get("UpperThresholdCritical","N/A)")))
+                
+                
         resName="Sensors"
         # get the Chassis resource first
         rc,r,j,d=op.get(sc, op, rft, cmdTop, resName)
@@ -802,7 +804,8 @@ class RfChassisOperations():
              collName="Members"
              rc1,r1,j1,d1=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=d[collName][i]["@odata.id"], prop=prop)
              output=json.dumps(d1,indent=4)
-             sys.stdout.write("%-50s %-10s %-10s\n" % (d1["Id"], d1["Reading"], d1["Thresholds"]["UpperCritical"]["Reading"]))
+             sys.stdout.write("%-50s %-10s %-10s\n" % (d1["Id"], d1["Reading"], d1["Thresholds"].get("UpperCritical",{}).get("Reading","N/A")))
+
 
         return(rc,r,False,None)
 
