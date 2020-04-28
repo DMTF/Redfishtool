@@ -776,7 +776,7 @@ class RfChassisOperations():
           numOfLinks=len(d[collName])
           for i in range (0,numOfLinks):
             if collName== 'Fans':
-                sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i].get("Reading",{}),"N/A"))
+                sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i].get("Reading","N/A"),"N/A"))
             else:
                 sys.stdout.write("%-50s %-10s %-10s\n" % (d[collName][i]["MemberId"], d[collName][i].get("ReadingCelsius","N/A"), d[collName][i].get("UpperThresholdCritical","N/A)")))
                 
@@ -804,7 +804,7 @@ class RfChassisOperations():
              collName="Members"
              rc1,r1,j1,d1=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=d[collName][i]["@odata.id"], prop=prop)
              output=json.dumps(d1,indent=4)
-             sys.stdout.write("%-50s %-10s %-10s\n" % (d1["Id"], d1["Reading"], d1["Thresholds"].get("UpperCritical",{}).get("Reading","N/A")))
+             sys.stdout.write("%-50s %-10s %-10s\n" % (d1["Id"], d1.get("Reading", "N/A"), d1.get("Thresholds", {}).get("UpperCritical",{}).get("Reading","N/A")))
 
 
         return(rc,r,False,None)
