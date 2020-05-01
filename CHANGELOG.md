@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.3] - 2020-05-01
+- Added inventory and sensor options
+
 ## [1.1.2] - 2020-04-10
 - Made fix to collection listing to show members when optional properties are not present
 
