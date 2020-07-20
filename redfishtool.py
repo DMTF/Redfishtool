@@ -11,7 +11,7 @@
 #  Note: structure supports a future lib interface to the routines
 #        where the libWrapper is the interface
 #
-from redfishtool import main
+from redfishtoollib import main
 import sys
 
 if __name__ == "__main__":
