@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.4] - 2020-07-24
+- Renamed the package to not conflict with the name of the script
+- Added additional redfishtool.py script for Windows compatibility
+
 ## [1.1.3] - 2020-05-01
 - Added inventory and sensor options
 
