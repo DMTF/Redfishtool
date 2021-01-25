@@ -18,6 +18,7 @@ import sys
 import getopt
 import re
 import json
+import os
 from .redfishtoolTransport   import RfTransport
 from .ServiceRoot import RfServiceRoot
 from .Systems import RfSystemsMain
@@ -86,6 +87,7 @@ def displayOptions(rft):
         print("                                       the specified redfish protocol version before executing a sub-command. ")
         print("                                       The -C flag is auto-set if the -R Latest or -W ... options are selected")
         print("   -N,        --NonBlocking         -- Do not wait for asynchronous requests to complete.")
+        print("   -n,        --no-proxy            -- Ignore any PROXY environment variables.")
         print("   -H <hdrs>, --Headers=<hdrs>      -- Specify the request header list--overrides defaults. Format \"{ A:B, C:D...}\" ")
         print("   -D <flag>,  --Debug=<flag>       -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format")
         print("")
@@ -122,13 +124,13 @@ def main(argv):
     rft=RfTransport()
 
     try:
-        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:EI:M:F1L:i:m:l:aW:A:S:R:H:D:CN",
+        opts, args = getopt.gnu_getopt(argv[1:],"Vhvsqu:p:r:t:c:T:P:d:EI:M:F1L:i:m:l:aW:A:S:R:H:D:CNn",
                         ["Version", "help", "verbose", "status", "quiet", 
                          "user=", "password=", "rhost=", "token=", "config=", "Timeout=",
                          "Prop=", "data=", "Entries", "Id=", "Match=", "First", "One", "Link=",
                          "id=", "match=", "link", "all",
                          "Wait=", "Auth=","Secure=", "RedfishVersion=", "Headers=", "Debug=",
-                         "CheckRedfishVersion", "NonBlocking"])
+                         "CheckRedfishVersion", "NonBlocking", "no-proxy"])
     except getopt.GetoptError:
         rft.printErr("Error parsing options")
         displayUsage(rft)
@@ -287,6 +289,8 @@ def main(argv):
             rft.checkProtocolVer=True
         elif opt in ("-N", "--NonBlocking"):
             rft.blocking=False
+        elif opt in ("-n", "--no-proxy"):
+            rft.no_proxy = True
         else:
             rft.printErr("Error: Unsupported option: {}".format(opt))
             displayUsage(rft)
@@ -349,6 +353,10 @@ def main(argv):
     else:
         rft.subcommand=args[0]
         rft.subcommandArgv=list(args)
+
+    # disable reading of proxy environment variables for --no-proxy
+    if rft.no_proxy:
+        os.environ['NO_PROXY'] = '*'
 
     rft.printVerbose(5,"Main: subcmd: {}, subCmdArgs:{}".format(rft.subcommand,rft.subcommandArgv))
     rft.printVerbose(5,"Main: verbose={}, status={}, user={}, password={}, rhost={}".format(rft.verbose, rft.status,

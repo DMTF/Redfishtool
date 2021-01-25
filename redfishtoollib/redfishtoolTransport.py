@@ -91,6 +91,7 @@ class RfTransport():
         self.timeout=10         # http transport timeout in seconds, stored as int here
         self.checkProtocolVer=False  # if -C option, then we need to check/verify the protocol ver. dflt=false
         self.blocking=True
+        self.no_proxy=False
 
         # more option parsing variables
         self.prop=None
