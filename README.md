@@ -130,6 +130,7 @@ For `Systems`, `Managers`, and `Chassis` commands that require specifying a top-
                                         the specified redfish protocol version before executing a sub-command. 
                                         The -C flag is auto-set if the -R Latest or -W ... options are selected
     -N,        --NonBlocking         -- Do not wait for asynchronous requests to complete.
+    -n,        --no-proxy            -- Ignore any PROXY environment variables.
     -H <hdrs>, --Headers=<hdrs>      -- Specify the request header list--overrides defaults. Format "{ A:B, C:D...}" 
     -D <flag>,  --Debug=<flag>       -- Flag for dev debug. <flag> is a 32-bit uint: 0x<hex> or <dec> format
 
