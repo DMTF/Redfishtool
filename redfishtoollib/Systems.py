@@ -67,7 +67,7 @@ class RfSystemsMain():
         print("     list                      -- list information about the Systems collection members(\"Id\", URI, and AssetTag)")
         print("     patch {A: B,C: D,...}     -- patch the json-formatted {prop: value...} data to the object")
         print("     reset <resetType>         -- reset a system.  <resetType>= On,  GracefulShutdown, GracefulRestart, ")
-        print("                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton")
+        print("                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton, PowerCycle")
         print("     setAssetTag <assetTag>    -- set the system's asset tag ")
         print("     setIndicatorLed  <state>  -- set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking")
         print("     setBootOverride <enabledVal> <targetVal> -- set Boot Override properties. <enabledVal>=Disabled|Once|Continuous")

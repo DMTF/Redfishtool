@@ -167,7 +167,7 @@ For Subcommand usage, including subcommand Operations and OtherArgs, execute:
        list                      -- list information about the Systems collection members("Id", URI, and AssetTag)
        patch {A: B,C: D,...}     -- patch the json-formatted {prop: value...} data to the object
        reset <resetType>         -- reset a system.  <resetType>= On,  GracefulShutdown, GracefulRestart, 
-                                     ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton
+                                     ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton, PowerCycle
        setAssetTag <assetTag>    -- set the system's asset tag 
        setIndicatorLed  <state>  -- set the indicator LED.  <state>=redfish defined values: Off, Lit, Blinking
        setBootOverride <enabledVal> <targetVal> -- set Boot Override properties. <enabledVal>=Disabled|Once|Continuous
@@ -229,7 +229,7 @@ For Subcommand usage, including subcommand Operations and OtherArgs, execute:
        list                      -- list information about the Managers collection members("Id", URI, and UUID)
        patch {A: B,C: D,...}     -- patch the json-formatted {prop: value...} data to the object
        reset <resetType>         -- reset a Manager.  <resetType>= On,  GracefulShutdown, GracefulRestart, 
-                                     ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton
+                                     ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton, PowerCycle
        setDateTime <dateTimeString>--set the date and time
        setTimeOffset offset=<offsetString>  --set the time offset w/o changing time setting
                                               <offsetString> is of form "[+/-]mm:ss". Ex: "-10:01" 
