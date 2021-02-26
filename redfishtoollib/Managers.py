@@ -64,7 +64,7 @@ class RfManagersMain():
         print("     list                      -- list information about the Managers collection members(\"Id\", URI, and UUID)")
         print("     patch {A: B,C: D,...}     -- patch the json-formatted {prop: value...} data to the object")
         print("     reset <resetType>         -- reset a Manager.  <resetType>= On,  GracefulShutdown, GracefulRestart, ")
-        print("                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton")
+        print("                                   ForceRestart, ForceOff, ForceOn, Nmi, PushPowerButton, PowerCycle")
         print("     setDateTime <dateTimeString>--set the date and time")
         print("     setTimeOffset offset=<offsetString>  --set the time offset w/o changing time setting")
         print("                                            <offsetString> is of form \"[+/-]mm:ss\". Ex: \"-10:01\" ")
