@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.5] - 2021-03-02
+- Added --no-proxy option
+- Fixed missing documentation to show PowerCycle is a valid reset option
+
 ## [1.1.4] - 2020-07-24
 - Renamed the package to not conflict with the name of the script
 - Added additional redfishtool.py script for Windows compatibility
