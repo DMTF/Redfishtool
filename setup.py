@@ -6,7 +6,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='redfishtool',
-      version='1.1.4',
+      version='1.1.5',
       description='Redfishtool package and command-line client',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -21,7 +21,7 @@ setup(name='redfishtool',
       ],
       keywords='Redfish',
       url='https://github.com/DMTF/Redfishtool',
-      download_url='https://github.com/DMTF/Redfishtool/archive/1.1.4.tar.gz',
+      download_url='https://github.com/DMTF/Redfishtool/archive/1.1.5.tar.gz',
       packages=['redfishtoollib'],
       scripts=['scripts/redfishtool', 'scripts/redfishtool.py'],
       install_requires=['python-dateutil', 'requests']
