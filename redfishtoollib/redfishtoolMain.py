@@ -98,7 +98,7 @@ def listSubcommands(rft):
         print("     hello                 -- redfishtool hello world subcommand for dev testing")
         print("     about                 -- display version and other information about this version of {}".format(rft.program))
         print("     versions              -- get redfishProtocol versions supported by rhost: GET ^/redfish")
-        print("     root   |  serviceRoot -- get serviceRoot resouce: GET ^/redfish/v1/")
+        print("     root   |  serviceRoot -- get serviceRoot resource: GET ^/redfish/v1/")
         print("     Systems               -- operations on Computer Systems in the /Systems collection ")
         print("     Chassis               -- operations on Chassis in the /Chassis collection")
         print("     Managers              -- operations on Managers in the /Managers collection")
@@ -377,7 +377,7 @@ def main(argv):
 
     rft.printVerbose(5,"Main: options parsed.  Now lookup subcommand and execute it")
 
-    # instansiate the SubCmd object, and run the specified subcommand
+    # instantiate the SubCmd object, and run the specified subcommand
     #rfCmds=RfSubCmds()   
     #rc=rfCmds.runSubCmd(rft)
     rc,r,j,d=runSubCmd(rft)

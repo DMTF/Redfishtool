@@ -28,10 +28,10 @@ While other generic HTTP clients such as Linux curl can send and receive Redfish
 ## Why redfishtool?
 
 1. ***redfishtool*** was originally written during the development of the Redfish specification to help find ambiguities in the spec.
-1. ***redfishtool*** is now also being used to test inter-operability between redfish service implementations.
+1. ***redfishtool*** is now also being used to test interoperability between redfish service implementations.
 1. In addition, ***redfishtool*** provides an example implementation for how a client can execute common server management functions like inventory; power-on/off/reset; setting power limits, indicator LEDs, and AssetTags, and searching a multi-node redfish service to find a specific node (with specific UUID, redfish Id, etc).  redfishtool follows strict rules of interoperability.  To support this goal, liberal comments are added throughout code to explain why each step is being executed.
 1. As described above, it makes it easy to use the Redfish API from a BASH script, or as an easy-to-use interactive CLI -- but WITHOUIT creating a 'new API'.   All (rather most) of the responses from ***redfishtool*** are Redfish-defined responses.  The properties and resources are defined in the redfish spec.   ***redfishtool*** is just a tool to access the Redfish API-not a new interface itself.
-    * The execption is that a 'list' operation was added for all collections to display the key properties for each of the members--rather than just the URIs to the members.
+    * The exception is that a 'list' operation was added for all collections to display the key properties for each of the members--rather than just the URIs to the members.
 
 
 ## Installation
@@ -140,7 +140,7 @@ For `Systems`, `Managers`, and `Chassis` commands that require specifying a top-
     hello                 -- redfishtool hello world subcommand for dev testing
     about                 -- display version and other information about this version of redfishtool
     versions              -- get redfishProtocol versions supported by rhost: GET ^/redfish
-    root   |  serviceRoot -- get serviceRoot resouce: GET ^/redfish/v1/
+    root   |  serviceRoot -- get serviceRoot resource: GET ^/redfish/v1/
     Systems               -- operations on Computer Systems in the /Systems collection 
     Chassis               -- operations on Chassis in the /Chassis collection
     Managers              -- operations on Managers in the /Managers collection

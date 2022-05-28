@@ -383,7 +383,7 @@ class RfSystemsOperations():
         #now read remote service to find out if specified resetType is one of the allowable values for this rhost
         rc,r,j,d=op.get(sc,op,rft,prop="Actions")
         if(rc != 0):
-            print("Error, cant read Actions properties from remote service")
+            print("Error, can't read Actions properties from remote service")
             return(8,None,False,None)
 
         if( (j is True) and ("Actions" in d) and ("#ComputerSystem.Reset" in d["Actions"])):
@@ -531,11 +531,11 @@ class RfSystemsOperations():
             return(8,None,False,None)
         
         #now read target,
-        # we will need to check that the properteis we are patching are there, and chk for etag hdr
+        # we will need to check that the properties we are patching are there, and chk for etag hdr
         #  and to see if the value specified is one of the allowable values for this rhost
         rc,r,j,d=op.get(sc,op,rft,prop="Boot")
         if(rc != 0):
-            print("Error, cant read boot properties from remote service")
+            print("Error, can't read boot properties from remote service")
             return(8,None,False,None)
         
         # verify that they have a BootSourceOverrideEnabled  prop
