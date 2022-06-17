@@ -361,7 +361,7 @@ class RfSessionServiceOperations():
         # get the Sessions collection
         rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', r.url, relPath=sessionsLink, prop=prop)
         if(rc != 0):
-            rft.printErr("Error: logout: cant read sessions collection")
+            rft.printErr("Error: logout: can't read sessions collection")
             return(6,None,False,None)
         # now search for 2nd level resource and return
         path2,rc,r,j,d=rft.getLevel2ResourceById(rft,r,d)

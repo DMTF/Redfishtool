@@ -260,23 +260,23 @@ class RfTransport():
                 rft.printStatus(3,r=r,authMsg=None)
 
             except requests.exceptions.ConnectTimeout:
-                # connect timeout occured.  try again w/o sleeping since a timeout already occured
-                rft.printVerbose(5,"Tranport: connectTimeout, try again")
+                # connect timeout occurred.  try again w/o sleeping since a timeout already occurred
+                rft.printVerbose(5,"Transport: connectTimeout, try again")
                 pass
             except (socket.error):
                 # this exception needed as requests is not catching socket timeouts
                 #  especially "connection refused" eg web server not started
                 # issue: https://github.com/kennethreitz/requests/issues/1236
                 # Nothing timed out.  this is a connect error. So wait and retry
-                rft.printVerbose(5,"Tranport: socket.error,  wait and try again")
+                rft.printVerbose(5,"Transport: socket.error,  wait and try again")
                 time.sleep(rft.waitTime)
             except (requests.exceptions.ReadTimeout):
-                # read timeout occured. This shouldn't happen, so fail it
+                # read timeout occurred. This shouldn't happen, so fail it
                 rft.printErr("Transport: Fatal timeout waiting for response from rhost")
                 return(5)
             except (requests.exceptions.ConnectionError):
                 # eg DNS error, connection refused.  wait and try again
-                rft.printVerbose(5,"Tranport: ConnectionError, wait and try again")
+                rft.printVerbose(5,"Transport: ConnectionError, wait and try again")
                 time.sleep(rft.waitTime)
             except requests.exceptions.RequestException as e:
                 # otherl requests exceptions.  return with error
@@ -294,7 +294,7 @@ class RfTransport():
 
                 
         if not success:   # retries were exceeded w/o success
-            rft.printErr("Transport: Cant connect to remote redfish service. Aborting command")
+            rft.printErr("Transport: Can't connect to remote redfish service. Aborting command")
             if( (r is not None) and ( r.status_code >= 400 )):
                 rft.printStatusErr4xx(r.status_code)
             else:
@@ -341,7 +341,7 @@ class RfTransport():
                 rft.printErr("  between {} and remote service".format(rft.program),noprog=True)
 
         # second, calculate the version to use if the user specifies a specific version number eg -P v2
-        else:  # user explicitely specified a version to use.  Check if service supports it
+        else:  # user explicitly specified a version to use.  Check if service supports it
             if rft.protocolVer in rft.supportedVersions:
                 if rft.protocolVer in serviceSupportedVersions:
                     rfVer=rft.protocolVer
@@ -502,23 +502,23 @@ class RfTransport():
 
             except requests.exceptions.ConnectTimeout:
                 # connect timeout occured.  try again w/o sleeping since a timeout already occured
-                rft.printVerbose(5,"Tranport: connectTimeout, try again")
+                rft.printVerbose(5,"Transport: connectTimeout, try again")
                 return(5,r,False,None)
             except (socket.error):
                 # this exception needed as requests is not catching socket timeouts
                 #  especially "connection refused" eg web server not started
                 # issue: https://github.com/kennethreitz/requests/issues/1236
                 # Nothing timed out.  this is a connect error. So wait and retry
-                rft.printVerbose(5,"Tranport: socket.error,  wait and try again")
+                rft.printVerbose(5,"Transport: socket.error,  wait and try again")
                 time.sleep(rft.waitTime)
                 return(5,r,False,None)
             except (requests.exceptions.ReadTimeout):
-                # read timeout occured. This shouldn't happen, so fail it
+                # read timeout occurred. This shouldn't happen, so fail it
                 rft.printErr("Transport: Fatal timeout waiting for response from rhost")
                 return(5,r,False,None)
             except (requests.exceptions.ConnectionError):
                 # eg DNS error, connection refused.  wait and try again
-                rft.printVerbose(5,"Tranport: ConnectionError, wait and try again")
+                rft.printVerbose(5,"Transport: ConnectionError, wait and try again")
                 time.sleep(rft.waitTime)
                 return(5,r,False,None)
             except requests.exceptions.RequestException as e:
@@ -1208,7 +1208,7 @@ class RfTransport():
             #where in this case, the getEtag header will have double quotes embedded in it
         else:
             getEtag=None
-            #patchHeaders={ "content-type": "application/json"} --dont need to specifiy this now
+            #patchHeaders={ "content-type": "application/json"} --dont need to specify this now
             patchHeaders=None
 
         # ideally, we should verify that the property to be patched is supported in the get response
@@ -1218,7 +1218,7 @@ class RfTransport():
         # send patch to rhost
         rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'PATCH', r.url,
                                         headersInput=patchHeaders, reqData=reqPatchData)
-        # if response was good but no data retured (status_Code=204), then do another GET to get the response
+        # if response was good but no data returned (status_Code=204), then do another GET to get the response
         if(rc==0):
             if(r.status_code==204):  #no data returned, get the response   
                 # if the getResponseAfterPatch was set False, dont get a response

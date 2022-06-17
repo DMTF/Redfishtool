@@ -575,7 +575,7 @@ class RfChassisOperations():
                 powerLimitData["LimitException"]=exceptionVal
                 includeException=True
                          
-        # check if there is an optional 4th arg <correctionTime> in miliseconds
+        # check if there is an optional 4th arg <correctionTime> in milliseconds
         includeCorrectionTime=False
         if (sc.argnum > 3 ):
             correctionPattern="(^([1-9][0-9]{,6})$)"   #  1-999999 ms

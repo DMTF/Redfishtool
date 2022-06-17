@@ -323,7 +323,7 @@ class RfManagersOperations():
         #now read remote service to find out if specified resetType is one of the allowable values for this rhost
         rc,r,j,d=op.get(sc,op,rft,prop="Actions")
         if(rc != 0):
-            print("Error, cant read Actions properties from remote service")
+            print("Error, can't read Actions properties from remote service")
             return(8,None,False,None)
 
         if( (j is True) and ("Actions" in d) and ("#Manager.Reset" in d["Actions"])):
