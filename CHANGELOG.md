@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.6] - 2022-06-20
+- Minor spelling fixes
+
 ## [1.1.5] - 2021-03-02
 - Added --no-proxy option
 - Fixed missing documentation to show PowerCycle is a valid reset option
