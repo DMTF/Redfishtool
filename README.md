@@ -600,11 +600,8 @@ In order for executables to resolve if using Windows, ensure both the "Python" a
 
 ## Release Process
 
-1. Update `CHANGELOG.md` with the list of changes since the last release
-2. Update the `self.version` and `self.releaseDate` variables in `redfishtool/redfishtoolTransport.py` to reflect the new tool version
-3. Update setup.py to reflect the new tool version
-4. Push changes to Github
-5. Create a new release in Github
-6. Push the new tool version to pypi.org
-    * `python setup.py sdist`
-    * `twine upload dist/*`
+1. Go to the "Actions" page
+2. Select the "Release and Publish" workflow
+3. Click "Run workflow"
+4. Fill out the form
+5. Click "Run workflow"
