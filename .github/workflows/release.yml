@@ -70,7 +70,7 @@ jobs:
         git config user.email "<>"
         git add CHANGELOG.md setup.py redfishtoollib/redfishtoolTransport.py
         git commit -s -m "${{github.event.inputs.version}} versioning"
-        git push origin master
+        git push origin main
     - name: Make the release
       id: create_release
       uses: actions/create-release@v1
