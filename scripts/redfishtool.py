@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Copyright Notice:
 # Copyright 2016, 2020 DMTF. All rights reserved.
-# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/blob/master/LICENSE.md
+# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfishtool/blob/main/LICENSE.md
 
 # redfishtool:  scripts/redfishtool.py
 #
