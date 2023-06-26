@@ -584,7 +584,13 @@ class RfSystemsOperations():
                 return(8,None,False,None)
             
             #form the patch data
-            patchData={"Boot": {"BootSourceOverrideEnabled": enabledVal, "BootSourceOverrideTarget": targetVal } }
+
+            # Get the value of "BootSourceOverrideTarget" property and pass it in the patch request.
+            # Some HW vendors need this property to be passed explicitly.
+            if "BootSourceOverrideMode" in d["Boot"]:
+                patchData={"Boot": {"BootSourceOverrideEnabled": enabledVal, "BootSourceOverrideTarget": targetVal, "BootSourceOverrideMode": d["Boot"]["BootSourceOverrideMode"] } }
+            else:
+                patchData={"Boot": {"BootSourceOverrideEnabled": enabledVal, "BootSourceOverrideTarget": targetVal } }
 
             #call the generic patch command to send the patch.  This takes care of etag support
             rc,r,j,d=rft.patchResource(rft, r, patchData)
