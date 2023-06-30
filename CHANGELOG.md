@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.7] - 2023-06-30
+- Added workaround to specify the 'BootSourceOverrideMode' property when modifying the boot override properties even if the mode is not changing
+
 ## [1.1.6] - 2022-06-20
 - Minor spelling fixes
 
