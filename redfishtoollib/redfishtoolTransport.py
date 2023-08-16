@@ -1008,7 +1008,7 @@ class RfTransport():
 
         elif(rft.gotMatchOptn):
             baseUrl=r.url
-            matchedPath=None
+            matchedPath,matchedRc,matchedR,matchedJ,matchedD=None,1,None,False,None
             matches=0
             for i in range (0,numOfLinks):
                 if( '@odata.id'  not in coll['Members'][i] ):
@@ -1019,13 +1019,13 @@ class RfTransport():
                     rc,r,j,d=rft.rftSendRecvRequest(rft.AUTHENTICATED_API, 'GET', baseUrl, relPath=path)
                     if(rc==0):  # if matchProp found
                         if( d[rft.matchProp] == rft.matchValue ):
-                            matchedPath=path
+                            matchedPath,matchedRc,matchedR,matchedJ,matchedD=path,rc,r,j,d
                             matches +=1
                             if( matches > 1 ):
                                 rft.printErr("Error: getPathBy --Id or --Match option: failed: found multiple matches.")
                                 return(None,1,None,False,None)
                             if(rft.firstOptn):
-                                return(matchedPath,rc,r,j,d)
+                                return(matchedPath,matchedRc,matchedR,matchedJ,matchedD)
                         else:
                             rft.printVerbose(4,"Transport:getPathBy:Match: failed match: matchProp={}, matchValue={}, readValue={}".format(rft.matchProp,rft.matchValue,d[rft.matchProp]))
                             pass
@@ -1035,7 +1035,7 @@ class RfTransport():
             #after looping over all members in the array,
             #if here, if we got a match, return the path.  If not, then no match was found. return none
             if( matches > 0 ):
-                return(matchedPath,rc,r,j,d)
+                return(matchedPath,matchedRc,matchedR,matchedJ,matchedD)
             else:
                 rft.printErr("Error: getPathBy --Id or --Match option: no match found in collection")
                 return(None,1,None,False,None)
