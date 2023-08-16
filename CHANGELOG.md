@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.8] - 2023-08-16
+- Corrected matching logic to return the matched resource if found
+
 ## [1.1.7] - 2023-06-30
 - Added workaround to specify the 'BootSourceOverrideMode' property when modifying the boot override properties even if the mode is not changing
 
