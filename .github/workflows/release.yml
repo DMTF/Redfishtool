@@ -72,19 +72,10 @@ jobs:
         git commit -s -m "${{github.event.inputs.version}} versioning"
         git push origin main
     - name: Make the release
-      id: create_release
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      with:
-        tag_name: ${{github.event.inputs.version}}
-        release_name: ${{github.event.inputs.version}}
-        body: |
-          Changes since last release:
-          
-          ${{env.CHANGES}}
-        draft: false
-        prerelease: false
+      run: |
+        gh release create ${{github.event.inputs.version}} -t ${{github.event.inputs.version}} -n "Changes since last release:"$'\n\n'"$CHANGES"
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
