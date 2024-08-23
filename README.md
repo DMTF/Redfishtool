@@ -61,11 +61,11 @@ You may install the required packages by running:
 ***python***  ***redfishtool*** [ ***Options*** ] [ ***SubCommands*** ] [ ***Operation*** ] [ ***OtherArgs*** ]
 
 * ***redfishtool*** is a python3.4+ program.  It uses the python3 "requests" lib for sending HTTP requests, and a host of other standard libs in python3.4+
-* The ***redfishtool*** option/optarg parsing strictly follows the well established linux/GNU getopt syntax where arguments and options can be specified in any order, and both short (eg -r <host>) or long (--rhost=<host>) syntax is supported.
-* ***options*** are used to pass usernames, passwords, Host:port, authentication options, verbose/status flags, and also to specify how to search to find specific collection members (-I <Id>, -a (all), -M <prop>:<val> ).
+* The ***redfishtool*** option/optarg parsing strictly follows the well established linux/GNU getopt syntax where arguments and options can be specified in any order, and both short (eg `-r <host>`) or long (`--rhost=<host>`) syntax is supported.
+* ***options*** are used to pass usernames, passwords, Host:port, authentication options, verbose/status flags, and also to specify how to search to find specific collection members (`-I <Id>`, `-a (all)`, `-M <prop>:<val>` ).
 * ***subCommands*** indicate the general area of the API (following ipmitool convention), and align with Redfish navigation property names like "Chassis", "Systems", "AccountService", etc.
-* ***Operations*** are specify an action or operation you want to perform like S`ystems setBootOverride` ..., or `Systems reset`.
-* ***OtherArgs*** are any other arguments after the Operation that are sometimes required--like:  `Systems <setBootOverride> <enableValue>` <targetValue>`
+* ***Operations*** are specify an action or operation you want to perform like `Systems setBootOverride` ..., or `Systems reset`.
+* ***OtherArgs*** are any other arguments after the Operation that are sometimes required--like:  `Systems <setBootOverride> <enableValue> <targetValue>`
 
 ### Common OPTIONS:
 
