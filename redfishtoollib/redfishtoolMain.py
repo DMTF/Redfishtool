@@ -81,7 +81,7 @@ def displayOptions(rft):
         print("         --Wait=<num>:<ConnTimeout> --   before sending subcommand to rhost.  Default is -W 1:3")
         print("   -A <Authn>,   --Auth <Authn>     -- Authentication type to use:  Authn={None|Basic|Session}  Default is Basic")
         print("   -S <Secure>,  --Secure=<Secure>  -- When to use https: (Note: doesn't stop rhost from redirect http to https)")
-        print("                                       <Secure>={Always | IfSendingCredentials | IfLoginOrAuthenticatedApi(default) }")
+        print("                                       <Secure>={Always | Never | IfSendingCredentials | IfLoginOrAuthenticatedApi(default) }")
         print("   -R <ver>,  --RedfishVersion=<ver>-- The Major Redfish Protocol version to use: ver={v1(dflt), v<n>, Latest}")
         print("   -C         --CheckRedfishVersion -- tells Redfishtool to execute GET /redfish to verify that the rhost supports")
         print("                                       the specified redfish protocol version before executing a sub-command. ")

@@ -124,7 +124,7 @@ For `Systems`, `Managers`, and `Chassis` commands that require specifying a top-
           --Wait=<num>:<ConnTimeout> --   before sending subcommand to rhost.  Default is -W 1:3
     -A <Authn>,   --Auth <Authn>     -- Authentication type to use:  Authn={None|Basic|Session}  Default is Basic
     -S <Secure>,  --Secure=<Secure>  -- When to use https: (Note: doesn't stop rhost from redirect http to https)
-                                        <Secure>={Always | IfSendingCredentials | IfLoginOrAuthenticatedApi(default) }
+                                        <Secure>={Always | Never | IfSendingCredentials | IfLoginOrAuthenticatedApi(default) }
     -R <ver>,  --RedfishVersion=<ver>-- The Major Redfish Protocol version to use: ver={v1(dflt), v<n>, Latest}
     -C         --CheckRedfishVersion -- tells Redfishtool to execute GET /redfish to verify that the rhost supports
                                         the specified redfish protocol version before executing a sub-command. 
